@@ -17,7 +17,7 @@ import {
 import LoginSharpIcon from '@mui/icons-material/LoginSharp';
 
 // API
-import { service } from '../../api/service';
+import auth from '../../api/auth';
 
 // Interface
 import { FormValuesInterface } from './types';
@@ -54,27 +54,25 @@ function Login() {
 		event.preventDefault();
 
 		// Input degerleri aliniyor
-		const { username, password } = event.currentTarget;
+		const {
+			username: { value: username },
+			password: { value: password },
+		} = event.currentTarget;
 
-		// // API call
-		service
-			.post('/auth/login', {
-				username: username.value,
-				password: password.value,
+		// API call
+		auth
+			.login({
+				username,
+				password,
 			})
 			.then((response) => {
 				if (response.status === 200) {
-					// Diger api cagrilarinda kullanilmasi icin
-					// sunucunun dondugu token degeri
-					// axios'un defaults degerlerine ekleniyor.
+					// get token and set cookie
 					const token: string = response.data.token;
-					// service.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 					setToken(token, 2);
-					// Token cookie'ye kayit ediliyor.
-					// document.cookie = `token=${token}`;
 
-					// Alert mesaji siliniyor
-					setAlertText('');
+					// clear alert text
+					alertText && setAlertText('');
 
 					// redirect to boards page
 					navigate('/boards');

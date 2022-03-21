@@ -1,6 +1,7 @@
 // Imports
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useCookie from '../../hooks/useCookie';
 
 // MUI
 import {
@@ -15,7 +16,7 @@ import {
 import AppRegistrationSharpIcon from '@mui/icons-material/AppRegistrationSharp';
 
 // API
-import { service } from '../../api/service';
+import auth from '../../api/auth';
 
 // Interface
 import { FormValuesInterface } from './types';
@@ -23,6 +24,7 @@ import { FormValuesInterface } from './types';
 // LoginRegister Component
 function Register() {
 	// States
+	const [token, setToken] = useCookie('token', '');
 	const [formValues, setFormValues] = useState<FormValuesInterface>({
 		username: '',
 		password: '',
@@ -50,30 +52,28 @@ function Register() {
 	function handleRegister(event: React.FormEvent<HTMLFormElement>): void {
 		event.preventDefault();
 
-		// API call
 		// Input degerleri aliniyor
-		const { username, password, passwordConfirm } = event.currentTarget;
+		const {
+			username: { value: username },
+			password: { value: password },
+			passwordConfirm: { value: passwordConfirm },
+		} = event.currentTarget;
 
 		// API call
-		service
-			.post('/auth/register', {
-				username: username.value,
-				password: password.value,
-				passwordConfirm: passwordConfirm.value,
+		auth
+			.register({
+				username,
+				password,
+				passwordConfirm,
 			})
 			.then((response) => {
 				if (response.status === 200) {
-					// Diger api cagrilarinda kullanilmasi icin
-					// sunucunun dondugu token degeri
-					// axios'un defaults degerlerine ekleniyor.
+					// get token and set cookie
 					const token: string = response.data.token;
-					service.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+					setToken(token, 2);
 
-					// Token cookie'ye kayit ediliyor.
-					document.cookie = `token=${token}`;
-
-					// Alert mesaji siliniyor
-					setAlertText('');
+					// clear alert text
+					alertText && setAlertText('');
 
 					// redirect to app
 					navigate('/boards', { replace: true });
