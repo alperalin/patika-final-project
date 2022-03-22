@@ -1,8 +1,8 @@
 // Imports
 import React, { useEffect, useState } from 'react';
-import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
-import { login, verify } from '../../features/user/userSlice';
+import { login, clearStatus } from '../../features/user/userSlice';
 import useCookie from '../../hooks/useCookie';
 
 // MUI
@@ -19,9 +19,6 @@ import {
 } from '@mui/material';
 import LoginSharpIcon from '@mui/icons-material/LoginSharp';
 
-// API
-import api from '../../api';
-
 // Interface
 import { FormValuesInterface } from './types';
 
@@ -35,31 +32,23 @@ function Login() {
 	});
 
 	// Redux
-	const { token, apiStatus, apiError } = useAppSelector((state) => state.user);
+	const { token, apiStatus, apiMessage } = useAppSelector(
+		(state) => state.user
+	);
 	const dispatch = useAppDispatch();
 
 	// Router
 	const navigate = useNavigate();
 
-	// First init
-	// Redux cookie bilmedigi icin once cookie Bearer olarak kayit ediliyor.
-	// Daha sonra Redux user verify reducer'i dispatch ediliyor.
-	// Eger cookie hala gecerli bir token ise kullanici otomatik uygulamaya yonlendiriliyor.
-	useEffect(() => {
-		if (apiStatus === 'idle' && cookie) {
-			api.defaults.headers.common['Authorization'] = `Bearer ${cookie}`;
-			dispatch(verify(cookie));
-		}
-	}, []);
-
 	// API Succeeded mesaji donerse cookie'ye state'den gelen token kayit ediliyor.
 	// ve kullanici uygulamaya yonlendiriliyor.
 	useEffect(() => {
 		if (apiStatus === 'succeeded') {
+			dispatch(clearStatus());
 			setCookie(token);
 			navigate('/boards');
 		}
-	}, [navigate, apiStatus]);
+	}, [apiStatus]);
 
 	// Functions
 	// handle Inputs
@@ -107,7 +96,7 @@ function Login() {
 
 			{apiStatus === 'failed' ? (
 				<Alert severity="error" sx={{ mb: 3 }}>
-					{apiError}
+					{apiMessage}
 				</Alert>
 			) : (
 				''

@@ -17,6 +17,7 @@ import Auth from './components/Auth/Auth';
 import Login from './components/Login';
 import Register from './components/Register';
 import Homepage from './components/Homepage';
+import Boards from './components/Boards';
 import App from './components/App';
 
 ReactDOM.render(
@@ -30,6 +31,14 @@ ReactDOM.render(
 						<Route path="/register" element={<Register />} />
 						<Route
 							path="/boards"
+							element={
+								<Auth>
+									<Boards />
+								</Auth>
+							}
+						></Route>
+						<Route
+							path="/boards/:boardId"
 							element={
 								<Auth>
 									<App />

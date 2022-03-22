@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
-import { register, verify } from '../../features/user/userSlice';
+import { register, clearStatus } from '../../features/user/userSlice';
 import useCookie from '../../hooks/useCookie';
 
 // MUI
@@ -18,9 +18,6 @@ import {
 } from '@mui/material';
 import AppRegistrationSharpIcon from '@mui/icons-material/AppRegistrationSharp';
 
-// API
-import api from '../../api';
-
 // Interface
 import { FormValuesInterface } from './types';
 
@@ -35,27 +32,19 @@ function Register() {
 	});
 
 	// Redux
-	const { token, apiStatus, apiError } = useAppSelector((state) => state.user);
+	const { token, apiStatus, apiMessage } = useAppSelector(
+		(state) => state.user
+	);
 	const dispatch = useAppDispatch();
 
 	// Router
 	const navigate = useNavigate();
 
-	// First init
-	// Redux cookie bilmedigi icin once cookie Bearer olarak kayit ediliyor.
-	// Daha sonra Redux user verify reducer'i dispatch ediliyor.
-	// Eger cookie hala gecerli bir token ise kullanici otomatik uygulamaya yonlendiriliyor.
-	useEffect(() => {
-		if (apiStatus === 'idle' && cookie) {
-			api.defaults.headers.common['Authorization'] = `Bearer ${cookie}`;
-			dispatch(verify(cookie));
-		}
-	}, []);
-
 	// API Succeeded mesaji donerse cookie'ye state'den gelen token kayit ediliyor.
 	// ve kullanici uygulamaya yonlendiriliyor.
 	useEffect(() => {
 		if (apiStatus === 'succeeded') {
+			dispatch(clearStatus());
 			setCookie(token);
 			navigate('/boards');
 		}
@@ -106,7 +95,7 @@ function Register() {
 
 			{apiStatus === 'failed' ? (
 				<Alert severity="error" sx={{ mb: 3 }}>
-					{apiError}
+					{apiMessage}
 				</Alert>
 			) : (
 				''

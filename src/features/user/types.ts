@@ -6,8 +6,9 @@ interface UserInterface {
 }
 
 interface UserReduxInterface extends UserInterface {
+	isLoggedIn: boolean;
 	apiStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
-	apiError: string | null;
+	apiMessage: string | null;
 }
 
 interface LoginInterface {

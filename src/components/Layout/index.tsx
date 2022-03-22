@@ -1,4 +1,3 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
 
 // MUI
@@ -11,8 +10,8 @@ function Layout() {
 	return (
 		<>
 			<Header />
-			<Container component="main">
-				<Grid container sx={{ mt: 5 }}>
+			<Container component="main" sx={{ mt: 5 }}>
+				<Grid container>
 					<Grid item md></Grid>
 					<Outlet />
 					<Grid item md></Grid>

@@ -4,7 +4,10 @@ This is a kanban app project for patika react bootcamp.
 
 ## TODO
 
-- Create and updates takes members id array as optional
+- Yapilan islemlerden sonra notify gosterilebilir.
+- Header icin App Bar component'i kullanilabilir. [link](https://mui.com/components/app-bar/)
+- Board uyelerini gostermek icin metinli avatars component'i kullanilabilir. [link](https://mui.com/components/avatars/)
+- Popup icin modal component'i kullanilabilir. [link](https://mui.com/components/modal/)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 

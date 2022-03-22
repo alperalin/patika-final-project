@@ -14,8 +14,9 @@ const initialState: UserReduxInterface = {
 	id: null,
 	username: '',
 	token: '',
+	isLoggedIn: false,
 	apiStatus: 'idle',
-	apiError: null,
+	apiMessage: null,
 };
 
 // Redux Slice for categories
@@ -25,6 +26,10 @@ const userSlice = createSlice({
 	reducers: {
 		clearUser: (state) => {
 			return { ...state, ...initialState };
+		},
+		clearStatus: (state) => {
+			state.apiStatus = 'idle';
+			return state;
 		},
 	},
 	extraReducers(builder) {
@@ -38,13 +43,14 @@ const userSlice = createSlice({
 				state.id = action.payload.id;
 				state.username = action.payload.username;
 				state.token = action.payload.token;
+				state.isLoggedIn = true;
 
 				// Set Axios Authorization
 				api.defaults.headers.common['Authorization'] = `Bearer ${state.token}`;
 			})
 			.addCase(login.rejected, (state, action) => {
 				state.apiStatus = 'failed';
-				state.apiError = action.error.message || null;
+				state.apiMessage = action.error.message || null;
 			});
 
 		// Register
@@ -57,13 +63,14 @@ const userSlice = createSlice({
 				state.id = action.payload.id;
 				state.username = action.payload.username;
 				state.token = action.payload.token;
+				state.isLoggedIn = true;
 
 				// Set Axios Authorization
 				api.defaults.headers.common['Authorization'] = `Bearer ${state.token}`;
 			})
 			.addCase(register.rejected, (state, action) => {
 				state.apiStatus = 'failed';
-				state.apiError = action.error.message || null;
+				state.apiMessage = action.error.message || null;
 			});
 
 		// Verify
@@ -76,9 +83,11 @@ const userSlice = createSlice({
 				state.id = action.payload.id;
 				state.username = action.payload.username;
 				state.token = action.payload.token;
+				state.isLoggedIn = true;
 			})
 			.addCase(verify.rejected, (state, action) => {
-				state.apiStatus = 'idle';
+				state.apiStatus = 'failed';
+				state.isLoggedIn = false;
 			});
 	},
 });
@@ -112,10 +121,10 @@ const verify = createAsyncThunk(
 );
 
 // Export Actions
-const { clearUser } = userSlice.actions;
+const { clearUser, clearStatus } = userSlice.actions;
 
 // Exports
-export { clearUser, login, register, verify };
+export { clearUser, clearStatus, login, register, verify };
 
 // Export selector
 export const userSelector = (state: RootState) => state.user;
