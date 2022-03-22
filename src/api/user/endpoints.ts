@@ -1,10 +1,10 @@
 // imports
 import api from '..';
-import { UserInterface } from './types';
+import { UsersInterface } from './types';
 
 // User Endpoints
 // Get All
-const getAll = async () => await api.get<UserInterface[]>('/user');
+const getAll = async () => await api.get<UsersInterface[]>('/user');
 
 // Export endpoints methods
 export { getAll };

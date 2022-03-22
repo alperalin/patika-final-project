@@ -2,5 +2,5 @@
 export interface FormValuesInterface {
 	username: string;
 	password: string;
-	passwordConfirm?: string;
+	passwordConfirm: string;
 }

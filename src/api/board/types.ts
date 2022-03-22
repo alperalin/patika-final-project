@@ -1,13 +1,13 @@
 import { ListInterface } from '../list/types';
-import { UserInterface } from '../user';
+import { UsersInterface } from '../user';
 
 // Interfaces
 interface BoardInterface {
 	id: number;
 	title: string;
 	ownerId: number;
-	owner: UserInterface;
-	members: UserInterface[] | [];
+	owner: UsersInterface;
+	members: UsersInterface[] | [];
 	lists: ListInterface[] | [];
 	createdAt: string;
 	updatedAt: string;

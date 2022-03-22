@@ -1,6 +1,8 @@
 // Imports
 import React, { useEffect, useState } from 'react';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
+import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
+import { login, verify } from '../../features/user/userSlice';
 import useCookie from '../../hooks/useCookie';
 
 // MUI
@@ -13,27 +15,51 @@ import {
 	Link,
 	Avatar,
 	Alert,
+	CircularProgress,
 } from '@mui/material';
 import LoginSharpIcon from '@mui/icons-material/LoginSharp';
 
 // API
-import auth from '../../api/auth';
+import api from '../../api';
 
 // Interface
 import { FormValuesInterface } from './types';
 
 // LoginRegister Component
 function Login() {
-	// States
-	const [token, setToken] = useCookie('token', '');
+	// Local States
+	const [cookie, setCookie] = useCookie('token', '');
 	const [formValues, setFormValues] = useState<FormValuesInterface>({
 		username: '',
 		password: '',
 	});
-	const [alertText, setAlertText] = useState<string>('');
 
-	// variables
+	// Redux
+	const { token, apiStatus, apiError } = useAppSelector((state) => state.user);
+	const dispatch = useAppDispatch();
+
+	// Router
 	const navigate = useNavigate();
+
+	// First init
+	// Redux cookie bilmedigi icin once cookie Bearer olarak kayit ediliyor.
+	// Daha sonra Redux user verify reducer'i dispatch ediliyor.
+	// Eger cookie hala gecerli bir token ise kullanici otomatik uygulamaya yonlendiriliyor.
+	useEffect(() => {
+		if (apiStatus === 'idle' && cookie) {
+			api.defaults.headers.common['Authorization'] = `Bearer ${cookie}`;
+			dispatch(verify(cookie));
+		}
+	}, []);
+
+	// API Succeeded mesaji donerse cookie'ye state'den gelen token kayit ediliyor.
+	// ve kullanici uygulamaya yonlendiriliyor.
+	useEffect(() => {
+		if (apiStatus === 'succeeded') {
+			setCookie(token);
+			navigate('/boards');
+		}
+	}, [navigate, apiStatus]);
 
 	// Functions
 	// handle Inputs
@@ -53,34 +79,10 @@ function Login() {
 		// Form'un default aksiyonu engelleniyor.
 		event.preventDefault();
 
-		// Input degerleri aliniyor
-		const {
-			username: { value: username },
-			password: { value: password },
-		} = event.currentTarget;
-
-		// API call
-		auth
-			.login({
-				username,
-				password,
-			})
-			.then((response) => {
-				if (response.status === 200) {
-					// get token and set cookie
-					const token: string = response.data.token;
-					setToken(token, 2);
-
-					// clear alert text
-					alertText && setAlertText('');
-
-					// redirect to boards page
-					navigate('/boards');
-				}
-			})
-			.catch((error) => {
-				setAlertText(error.response.data);
-			});
+		// Redux Login Dispatch
+		if (apiStatus === 'idle') {
+			dispatch(login({ ...formValues }));
+		}
 	}
 
 	// Element
@@ -103,10 +105,12 @@ function Login() {
 				Login to your account
 			</Typography>
 
-			{alertText && (
+			{apiStatus === 'failed' ? (
 				<Alert severity="error" sx={{ mb: 3 }}>
-					{alertText}
+					{apiError}
 				</Alert>
+			) : (
+				''
 			)}
 
 			<Box component="form" autoComplete="off" onSubmit={handleLogin}>
@@ -132,9 +136,15 @@ function Login() {
 					value={formValues['password']}
 					required
 				/>
-				<Button type="submit" variant="contained" fullWidth>
-					Log in
-				</Button>
+				{apiStatus === 'loading' ? (
+					<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+						<CircularProgress />
+					</Box>
+				) : (
+					<Button type="submit" variant="contained" fullWidth>
+						Log in
+					</Button>
+				)}
 				<Link
 					component={RouterLink}
 					to="/register"

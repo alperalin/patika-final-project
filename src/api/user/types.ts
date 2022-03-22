@@ -1,9 +1,9 @@
 // Interfaces
-interface UserInterface {
+interface UsersInterface {
 	id: number;
 	username: string;
 	createdAt: string;
 	updatedAt: string;
 }
 
-export type { UserInterface };
+export type { UsersInterface };

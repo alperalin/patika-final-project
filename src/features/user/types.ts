@@ -5,6 +5,11 @@ interface UserInterface {
 	token: string;
 }
 
+interface UserReduxInterface extends UserInterface {
+	apiStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
+	apiError: string | null;
+}
+
 interface LoginInterface {
 	username: string;
 	password: string;
@@ -16,4 +21,9 @@ interface RegisterInterface {
 	passwordConfirm: string;
 }
 
-export type { UserInterface, LoginInterface, RegisterInterface };
+export type {
+	UserReduxInterface,
+	UserInterface,
+	LoginInterface,
+	RegisterInterface,
+};

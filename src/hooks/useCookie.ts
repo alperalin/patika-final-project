@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-function useCookie(key: string, initialValue: string): [string, any, any] {
+function useCookie(key: string, initialValue: string = ''): [string, any, any] {
 	// Cookie okuma islemi
 	// Eger daha once ayni isimle tanimlanmis cookie varsa degeri donuluyor
 	// Yoksa initialValue olarak gonderilen deger donduruluyor.

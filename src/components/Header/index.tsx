@@ -1,8 +1,7 @@
 // Imports
 import React from 'react';
-// import { logoutTodos } from '../../features/todos/todosSlice';
-// import { logoutCategories } from '../../features/categories/categoriesSlice';
-// import { useAppDispatch } from '../../utils/hooks';
+import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
+import { clearUser } from '../../features/user/userSlice';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import useCookie from '../../hooks/useCookie';
 
@@ -10,13 +9,20 @@ import useCookie from '../../hooks/useCookie';
 import { Box, Button, Grid, Typography } from '@mui/material';
 
 function Header() {
-	const [token, setToken, deleteToken] = useCookie('token', '');
+	// Local State
+	const [cookie, setCookie, deleteCookie] = useCookie('token', '');
+
+	// Redux
+	const { token } = useAppSelector((state) => state.user);
+	const dispatch = useAppDispatch();
+
+	// Router
 	const navigate = useNavigate();
-	// const dispatch = useAppDispatch();
 
 	// Handle Logout
 	function handleLogout(): void {
-		deleteToken();
+		dispatch(clearUser());
+		deleteCookie();
 		navigate('/');
 	}
 
@@ -64,7 +70,7 @@ function Header() {
 					}}
 				>
 					{token && (
-						<Button onClick={handleLogout} variant="contained">
+						<Button onClick={handleLogout} variant="outlined">
 							Logout
 						</Button>
 					)}

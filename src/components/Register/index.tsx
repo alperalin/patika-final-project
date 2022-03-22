@@ -1,6 +1,8 @@
 // Imports
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
+import { register, verify } from '../../features/user/userSlice';
 import useCookie from '../../hooks/useCookie';
 
 // MUI
@@ -12,28 +14,52 @@ import {
 	Button,
 	Avatar,
 	Alert,
+	CircularProgress,
 } from '@mui/material';
 import AppRegistrationSharpIcon from '@mui/icons-material/AppRegistrationSharp';
 
 // API
-import auth from '../../api/auth';
+import api from '../../api';
 
 // Interface
 import { FormValuesInterface } from './types';
 
 // LoginRegister Component
 function Register() {
-	// States
-	const [token, setToken] = useCookie('token', '');
+	// Local States
+	const [cookie, setCookie] = useCookie('token', '');
 	const [formValues, setFormValues] = useState<FormValuesInterface>({
 		username: '',
 		password: '',
 		passwordConfirm: '',
 	});
-	const [alertText, setAlertText] = useState<string>('');
 
-	// variables
+	// Redux
+	const { token, apiStatus, apiError } = useAppSelector((state) => state.user);
+	const dispatch = useAppDispatch();
+
+	// Router
 	const navigate = useNavigate();
+
+	// First init
+	// Redux cookie bilmedigi icin once cookie Bearer olarak kayit ediliyor.
+	// Daha sonra Redux user verify reducer'i dispatch ediliyor.
+	// Eger cookie hala gecerli bir token ise kullanici otomatik uygulamaya yonlendiriliyor.
+	useEffect(() => {
+		if (apiStatus === 'idle' && cookie) {
+			api.defaults.headers.common['Authorization'] = `Bearer ${cookie}`;
+			dispatch(verify(cookie));
+		}
+	}, []);
+
+	// API Succeeded mesaji donerse cookie'ye state'den gelen token kayit ediliyor.
+	// ve kullanici uygulamaya yonlendiriliyor.
+	useEffect(() => {
+		if (apiStatus === 'succeeded') {
+			setCookie(token);
+			navigate('/boards');
+		}
+	}, [navigate, apiStatus]);
 
 	// Functions
 	// handle Inputs
@@ -52,36 +78,10 @@ function Register() {
 	function handleRegister(event: React.FormEvent<HTMLFormElement>): void {
 		event.preventDefault();
 
-		// Input degerleri aliniyor
-		const {
-			username: { value: username },
-			password: { value: password },
-			passwordConfirm: { value: passwordConfirm },
-		} = event.currentTarget;
-
-		// API call
-		auth
-			.register({
-				username,
-				password,
-				passwordConfirm,
-			})
-			.then((response) => {
-				if (response.status === 200) {
-					// get token and set cookie
-					const token: string = response.data.token;
-					setToken(token, 2);
-
-					// clear alert text
-					alertText && setAlertText('');
-
-					// redirect to app
-					navigate('/boards', { replace: true });
-				}
-			})
-			.catch((error) => {
-				setAlertText(error.response.data['issues'][0].message);
-			});
+		// Redux Register Dispatch
+		if (apiStatus === 'idle') {
+			dispatch(register({ ...formValues }));
+		}
 	}
 
 	// Element
@@ -104,10 +104,12 @@ function Register() {
 				Register an account
 			</Typography>
 
-			{alertText && (
+			{apiStatus === 'failed' ? (
 				<Alert severity="error" sx={{ mb: 3 }}>
-					{alertText}
+					{apiError}
 				</Alert>
+			) : (
+				''
 			)}
 
 			<Box component="form" autoComplete="off" onSubmit={handleRegister}>
@@ -145,9 +147,15 @@ function Register() {
 					value={formValues['passwordConfirm']}
 					required
 				/>
-				<Button type="submit" variant="contained" fullWidth>
-					Register
-				</Button>
+				{apiStatus === 'loading' ? (
+					<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+						<CircularProgress />
+					</Box>
+				) : (
+					<Button type="submit" variant="contained" fullWidth>
+						Register
+					</Button>
+				)}
 			</Box>
 		</Grid>
 	);
