@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 
-import { fetchAll } from '../../features/boards/boardsSlice';
+import { fetchById } from '../../features/boards/boardsSlice';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
+import { selectListsByBoardId } from '../../features/lists/listsSlice';
 
 // MUI
 import {
@@ -19,11 +20,11 @@ import {
 } from '@mui/material';
 
 function App() {
-	// const boards = useAppSelector((state) => state.boards.data);
-	// const apiStatus = useAppSelector((state) => state.boards.apiStatus);
-	// const apiMessage = useAppSelector((state) => state.boards.apiMessage);
-	// const dispatch = useAppDispatch();
 	const { boardId } = useParams();
+	const lists = useAppSelector((state) =>
+		selectListsByBoardId(state, Number(boardId))
+	);
+	const dispatch = useAppDispatch();
 
 	// Boards cekiliyor
 	// useEffect(() => {
@@ -32,11 +33,18 @@ function App() {
 	// 	}
 	// }, [dispatch, apiStatus]);
 
+	useEffect(() => {
+		dispatch(fetchById({ id: Number(boardId) }));
+	}, []);
+
 	return (
 		<Grid item xs={12} sx={{ padding: 2 }}>
 			<Typography component="h1" sx={{ fontSize: '2rem', textAlign: 'center' }}>
 				Welcome To {boardId}
 			</Typography>
+
+			{lists &&
+				lists.map((list, index) => <span key={index}>{list.title}</span>)}
 
 			{/* {apiStatus === 'loading' && (
 				<Box sx={{ display: 'flex', justifyContent: 'center' }}>

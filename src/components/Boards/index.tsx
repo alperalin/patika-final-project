@@ -2,9 +2,10 @@ import React, { useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 import {
-	create,
+	// create,
 	fetchAll,
-	clearStatus,
+	// clearStatus,
+	selectAllBoards,
 } from '../../features/boards/boardsSlice';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 
@@ -25,32 +26,37 @@ import AddBoxSharpIcon from '@mui/icons-material/AddBoxSharp';
 import AssessmentSharpIcon from '@mui/icons-material/AssessmentSharp';
 
 function Board() {
-	const boards = useAppSelector((state) => state.boards.data);
-	const apiStatus = useAppSelector((state) => state.boards.apiStatus);
-	const apiMessage = useAppSelector((state) => state.boards.apiMessage);
+	// const boards = useAppSelector((state) => state.boards.data);
+	// const apiStatus = useAppSelector((state) => state.boards.apiStatus);
+	// const apiMessage = useAppSelector((state) => state.boards.apiMessage);
+	const boards = useAppSelector(selectAllBoards);
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
 	// first init
 	// Boards cekiliyor
+	// useEffect(() => {
+	// 	if (apiStatus === 'idle') {
+	// 		dispatch(fetchAll());
+	// 	}
+	// }, []);
+
 	useEffect(() => {
-		if (apiStatus === 'idle') {
-			dispatch(fetchAll());
-		}
+		dispatch(fetchAll());
 	}, []);
 
 	// Board islemleri yapildiktan sonra
 	// apiStatus idle durumuna aliniyor
-	useEffect(() => {
-		if (apiStatus === 'succeeded') {
-			dispatch(clearStatus());
-		}
-	}, [apiStatus]);
+	// useEffect(() => {
+	// 	if (apiStatus === 'succeeded') {
+	// 		dispatch(clearStatus());
+	// 	}
+	// }, [apiStatus]);
 
 	// create new board
 	function createNewBoard(): void {
-		dispatch(create({ title: 'untitled' }));
-		navigate(`/boards/${boards.length ? boards[boards.length - 1].id + 1 : 1}`);
+		// dispatch(create({ title: 'untitled' }));
+		// navigate(`/boards/${boards.length ? boards[boards.length - 1].id + 1 : 1}`);
 	}
 
 	return (
@@ -59,11 +65,11 @@ function Board() {
 				Select A Board
 			</Typography>
 
-			{apiStatus === 'loading' && (
+			{/* {apiStatus === 'loading' && (
 				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 					<CircularProgress />
 				</Box>
-			)}
+			)} */}
 
 			{boards?.length && (
 				<Grid
@@ -100,12 +106,12 @@ function Board() {
 												{board.title}
 											</Typography>
 											<AvatarGroup max={2}>
-												{board.members &&
-													board.members.map((member) => (
+												{/* {board.members &&
+													board.members.map((member: any) => (
 														<Avatar key={member.id}>{`${member.username.charAt(
 															0
 														)}`}</Avatar>
-													))}
+													))} */}
 											</AvatarGroup>
 										</CardContent>
 									</CardActionArea>

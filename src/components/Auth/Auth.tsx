@@ -6,6 +6,7 @@ import useCookie from '../../hooks/useCookie';
 
 // API
 import api from '../../api';
+import { CircularProgress } from '@mui/material';
 
 // interface
 interface AuthInterface {
@@ -32,7 +33,9 @@ function Auth({ children }: AuthInterface) {
 	}, []);
 
 	// State'teki isLoggedIn degeri false ise ziyaretciyi login sayfasina gonder
-	if (!isLoggedIn) {
+	if (apiStatus === 'loading') {
+		<CircularProgress />;
+	} else if (!isLoggedIn) {
 		// based on https://reactrouter.com/docs/en/v6/examples/auth
 		// Redirect them to the /login page, but save the current location they were
 		// trying to go to when they were redirected. This allows us to send them

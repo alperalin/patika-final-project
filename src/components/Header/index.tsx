@@ -13,7 +13,7 @@ function Header() {
 	const [cookie, setCookie, deleteCookie] = useCookie('token', '');
 
 	// Redux
-	const { token } = useAppSelector((state) => state.user);
+	const { isLoggedIn } = useAppSelector((state) => state.user);
 	const dispatch = useAppDispatch();
 
 	// Router
@@ -37,25 +37,11 @@ function Header() {
 		>
 			<Grid container spacing={2}>
 				<Grid item xs={2}>
-					{/* <>
-						{location.pathname !== '/' &&
-							location.pathname !== '/categories' &&
-							location.pathname !== '/login' && (
-								<Button
-									component={RouterLink}
-									to={'/categories'}
-									variant="outlined"
-								>
-									Kategoriler Sayfasina Don
-								</Button>
-							)}
-
-						{location.pathname === '/categories' && (
-							<Button component={RouterLink} to={'/'} variant="outlined">
-								Todo Sayfasina Don
-							</Button>
-						)}
-					</> */}
+					{isLoggedIn && (
+						<Button component={RouterLink} to={'/boards'} variant="outlined">
+							Boards
+						</Button>
+					)}
 				</Grid>
 				<Grid item xs={8}>
 					<Typography component="h1" fontSize="1.5rem" textAlign="center" m={0}>
@@ -69,7 +55,7 @@ function Header() {
 						textAlign: 'right',
 					}}
 				>
-					{token && (
+					{isLoggedIn && (
 						<Button onClick={handleLogout} variant="outlined">
 							Logout
 						</Button>
