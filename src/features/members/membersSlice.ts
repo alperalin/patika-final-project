@@ -2,12 +2,13 @@ import {
 	createSlice,
 	createEntityAdapter,
 	createAsyncThunk,
+	createSelector,
 	PayloadAction,
 } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
 // Boards
-import { fetchAll, fetchById } from '../boards/boardsSlice';
+import { boardsFetchAll, boardsFetchById } from '../boards/boardsSlice';
 
 // Interfaces
 import {
@@ -36,16 +37,22 @@ const membersSlice = createSlice({
 	},
 	extraReducers(builder) {
 		builder
-			.addCase(fetchAll.fulfilled, (state, action: PayloadAction<any>) => {
-				if (action.payload.members)
-					membersAdapter.upsertMany(state, action.payload.members);
-				return state;
-			})
-			.addCase(fetchById.fulfilled, (state, action: PayloadAction<any>) => {
-				if (action.payload.members)
-					membersAdapter.upsertMany(state, action.payload.members);
-				return state;
-			});
+			.addCase(
+				boardsFetchAll.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					if (action.payload.members)
+						membersAdapter.upsertMany(state, action.payload.members);
+					return state;
+				}
+			)
+			.addCase(
+				boardsFetchById.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					if (action.payload.members)
+						membersAdapter.upsertMany(state, action.payload.members);
+					return state;
+				}
+			);
 	},
 });
 
@@ -53,14 +60,18 @@ const membersSlice = createSlice({
 // const { clearStatus } = boardsSlice.actions;
 
 // Exports
-// export { clearStatus, create, update, destroy, fetchAll };
+// export { clearStatus, create, update, destroy, boardsFetchAll };
 
 // Export selector
 export const membersSelector = (state: RootState) => state.members;
 
-export const { selectAll: selectAllMembers } = membersAdapter.getSelectors(
-	(state: RootState) => state.members
-);
+export const {
+	selectAll: selectMembersAll,
+	selectTotal: selectMembersTotal,
+	selectById: selectMembersById,
+	selectIds: selectMembersIds,
+	selectEntities: selectMembersEntities,
+} = membersAdapter.getSelectors((state: RootState) => state.members);
 
 // Export boardsSlice Reducer as Default
 export default membersSlice.reducer;

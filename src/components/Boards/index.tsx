@@ -1,11 +1,17 @@
 import React, { useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
+// Component
+import Header from '../Header';
+import CardItem from '../App/CardItem';
+
+// Store
 import {
-	// create,
-	fetchAll,
+	boardsCreate,
+	boardsDestroy,
+	boardsFetchAll,
 	// clearStatus,
-	selectAllBoards,
+	selectBoardsAll,
 } from '../../features/boards/boardsSlice';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 
@@ -14,35 +20,30 @@ import {
 	Avatar,
 	AvatarGroup,
 	Box,
+	Button,
 	Card,
 	CardActionArea,
+	CardActions,
 	CardContent,
 	CircularProgress,
+	Container,
 	Grid,
 	Typography,
 } from '@mui/material';
 
 import AddBoxSharpIcon from '@mui/icons-material/AddBoxSharp';
-import AssessmentSharpIcon from '@mui/icons-material/AssessmentSharp';
 
+// Element
 function Board() {
-	// const boards = useAppSelector((state) => state.boards.data);
+	const boards = useAppSelector(selectBoardsAll);
 	// const apiStatus = useAppSelector((state) => state.boards.apiStatus);
 	// const apiMessage = useAppSelector((state) => state.boards.apiMessage);
-	const boards = useAppSelector(selectAllBoards);
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
 	// first init
-	// Boards cekiliyor
-	// useEffect(() => {
-	// 	if (apiStatus === 'idle') {
-	// 		dispatch(fetchAll());
-	// 	}
-	// }, []);
-
 	useEffect(() => {
-		dispatch(fetchAll());
+		dispatch(boardsFetchAll());
 	}, []);
 
 	// Board islemleri yapildiktan sonra
@@ -54,99 +55,84 @@ function Board() {
 	// }, [apiStatus]);
 
 	// create new board
-	function createNewBoard(): void {
-		// dispatch(create({ title: 'untitled' }));
-		// navigate(`/boards/${boards.length ? boards[boards.length - 1].id + 1 : 1}`);
+	async function createNewBoard(): Promise<void> {
+		await dispatch(boardsCreate({ title: 'untitled' }))
+			.then((response: any) => navigate(`/boards/${response.payload.id}`))
+			.catch((error) => console.log(error));
 	}
 
 	return (
-		<Grid item xs={12} sx={{ padding: 2 }}>
-			<Typography component="h1" sx={{ fontSize: '2rem', textAlign: 'center' }}>
-				Select A Board
-			</Typography>
+		<>
+			<Header />
+			<Container component="main" sx={{ mt: 5 }}>
+				<Grid container>
+					<Grid item md></Grid>
+					<Grid item xs={12} sx={{ padding: 2 }}>
+						<Typography
+							component="h1"
+							sx={{ fontSize: '2rem', textAlign: 'center' }}
+						>
+							Select A Board
+						</Typography>
 
-			{/* {apiStatus === 'loading' && (
+						{/* {apiStatus === 'loading' && (
 				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 					<CircularProgress />
 				</Box>
 			)} */}
 
-			{boards?.length && (
-				<Grid
-					container
-					direction="row"
-					justifyContent="center"
-					alignItems="stretch"
-					spacing={3}
-					mt={5}
-				>
-					{boards &&
-						boards.map((board) => (
-							<Grid item key={board.id} xs={3}>
-								<Card
-									sx={{
-										width: '100%',
-										minHeight: 216,
-										height: '100%',
-									}}
-								>
-									<CardActionArea
-										sx={{
-											display: 'flex',
-											height: '100%',
-											alignContent: 'center',
-											justifyContent: 'center',
-										}}
-										component={RouterLink}
-										to={`/boards/${board.id}`}
-									>
-										<CardContent sx={{ width: '100%', textAlign: 'center' }}>
-											<AssessmentSharpIcon sx={{ fontSize: 64, mb: 1 }} />
-											<Typography component="h5" variant="h5" gutterBottom>
-												{board.title}
-											</Typography>
-											<AvatarGroup max={2}>
-												{/* {board.members &&
-													board.members.map((member: any) => (
-														<Avatar key={member.id}>{`${member.username.charAt(
-															0
-														)}`}</Avatar>
-													))} */}
-											</AvatarGroup>
-										</CardContent>
-									</CardActionArea>
-								</Card>
-							</Grid>
-						))}
-
-					<Grid item key={boards ? boards[boards.length - 1].id + 1 : 1} xs={3}>
-						<Card
-							sx={{
-								width: '100%',
-								height: '100%',
-							}}
-						>
-							<CardActionArea
-								sx={{
-									display: 'flex',
-									height: '100%',
-									alignContent: 'center',
-									justifyContent: 'center',
-								}}
-								onClick={createNewBoard}
+						{boards?.length && (
+							<Grid
+								container
+								direction="row"
+								justifyContent="center"
+								alignItems="stretch"
+								spacing={3}
+								mt={5}
 							>
-								<CardContent sx={{ width: '100%', textAlign: 'center' }}>
-									<AddBoxSharpIcon sx={{ fontSize: 64, mb: 1 }} />
-									<Typography component="h5" variant="h5" gutterBottom>
-										Add New
-									</Typography>
-								</CardContent>
-							</CardActionArea>
-						</Card>
+								{boards.map((board) => (
+									<Grid item key={board.id} xs={3}>
+										<CardItem board={board} />
+									</Grid>
+								))}
+
+								<Grid
+									item
+									key={boards ? boards[boards.length - 1].id + 1 : 1}
+									xs={3}
+								>
+									<Card
+										sx={{
+											width: '100%',
+											minHeight: '245.16px',
+											height: '100%',
+										}}
+									>
+										<CardActionArea
+											sx={{
+												display: 'flex',
+												height: '100%',
+												alignContent: 'center',
+												justifyContent: 'center',
+											}}
+											onClick={createNewBoard}
+										>
+											<CardContent sx={{ width: '100%', textAlign: 'center' }}>
+												<AddBoxSharpIcon sx={{ fontSize: 64, mb: 1 }} />
+												<Typography component="h5" variant="h5" gutterBottom>
+													Add New
+												</Typography>
+											</CardContent>
+										</CardActionArea>
+									</Card>
+								</Grid>
+							</Grid>
+						)}
 					</Grid>
+					<Grid item md></Grid>
 				</Grid>
-			)}
-		</Grid>
+			</Container>
+		</>
 	);
 }
 

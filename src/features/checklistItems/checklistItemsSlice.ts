@@ -8,7 +8,7 @@ import {
 import type { RootState } from '../store';
 
 // Boards
-import { fetchById } from '../boards/boardsSlice';
+import { boardsFetchById } from '../boards/boardsSlice';
 
 // Interfaces
 import {
@@ -37,7 +37,7 @@ const checklistItemsSlice = createSlice({
 	},
 	extraReducers(builder) {
 		builder.addCase(
-			fetchById.fulfilled,
+			boardsFetchById.fulfilled,
 			(state, action: PayloadAction<any>) => {
 				if (action.payload.checklistItems)
 					checklistItemsAdapter.upsertMany(
@@ -54,29 +54,32 @@ const checklistItemsSlice = createSlice({
 // const { clearStatus } = checklistItemsSlice.actions;
 
 // Exports
-// export { clearStatus, create, update, destroy, fetchAll };
+// export { clearStatus, create, update, destroy, boardsFetchAll };
 
 // Export selector
 export const checklistItemsSelector = (state: RootState) =>
 	state.checklistItems;
 
 export const {
-	selectAll: selectAllChecklistItems,
+	selectAll: selectChecklistItemsAll,
+	selectTotal: selectChecklistItemsTotal,
 	selectById: selectChecklistItemsById,
+	selectIds: selectChecklistItemsIds,
+	selectEntities: selectChecklistItemsEntities,
 } = checklistItemsAdapter.getSelectors(
 	(state: RootState) => state.checklistItems
 );
 
-export const selectChecklistItemsByCardId = createSelector(
-	[
-		selectAllChecklistItems,
-		(state: RootState, checklistId: number) => checklistId,
-	],
-	(checklistItems, checklistId) =>
-		checklistItems.filter(
-			(checklistItem) => checklistItem.checklistId === checklistId
-		)
-);
+// export const selectChecklistItemsByCardId = createSelector(
+// 	[
+// 		selectAllChecklistItems,
+// 		(state: RootState, checklistId: number) => checklistId,
+// 	],
+// 	(checklistItems, checklistId) =>
+// 		checklistItems.filter(
+// 			(checklistItem) => checklistItem.checklistId === checklistId
+// 		)
+// );
 
 // Export boardsSlice Reducer as Default
 export default checklistItemsSlice.reducer;

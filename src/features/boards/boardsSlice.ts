@@ -17,6 +17,7 @@ import {
 	BoardUpdateInterface,
 	BoardReduxInterface,
 } from './types';
+import { AxiosResponse } from 'axios';
 
 // const initialState: BoardReduxInterface = {
 // 	data: [],
@@ -65,90 +66,38 @@ const boardsSlice = createSlice({
 	},
 	extraReducers(builder) {
 		builder
-			.addCase(fetchAll.fulfilled, (state, action: PayloadAction<any>) => {
-				boardsAdapter.upsertMany(state, action.payload.boards);
+			.addCase(boardsCreate.fulfilled, (state, action: PayloadAction<any>) => {
+				boardsAdapter.addOne(state, action.payload);
 			})
-			.addCase(fetchById.fulfilled, (state, action: PayloadAction<any>) => {
-				boardsAdapter.upsertMany(state, action.payload.boards);
-			});
-
-		// // Create
-		// builder
-		// 	.addCase(create.pending, (state, action) => {
-		// 		state.apiStatus = 'loading';
-		// 	})
-		// 	.addCase(create.fulfilled, (state, action) => {
-		// 		state.apiStatus = 'succeeded';
-		// 		state.data = [...state.data, { ...action.payload }];
-		// 	})
-		// 	.addCase(create.rejected, (state, action) => {
-		// 		state.apiStatus = 'failed';
-		// 		state.apiMessage = action.error.message || null;
-		// 	});
-
-		// // Update
-		// builder
-		// 	.addCase(update.pending, (state, action) => {
-		// 		state.apiStatus = 'loading';
-		// 	})
-		// 	.addCase(update.fulfilled, (state, action) => {
-		// 		state.apiStatus = 'succeeded';
-
-		// 		const { id } = action.payload;
-		// 		const index = state.data.findIndex((item) => item.id === id);
-
-		// 		state.data = [
-		// 			...state.data.slice(0, index),
-		// 			action.payload,
-		// 			...state.data.slice(index + 1),
-		// 		];
-		// 	})
-		// 	.addCase(update.rejected, (state, action) => {
-		// 		state.apiStatus = 'failed';
-		// 		state.apiMessage = action.error.message || null;
-		// 	});
-
-		// // Destory
-		// builder
-		// 	.addCase(destroy.pending, (state, action) => {
-		// 		state.apiStatus = 'loading';
-		// 	})
-		// 	.addCase(destroy.fulfilled, (state, action) => {
-		// 		state.apiStatus = 'succeeded';
-
-		// 		const { id } = action.payload;
-		// 		const index = state.data.findIndex((item) => item.id === id);
-
-		// 		state.data = [
-		// 			...state.data.slice(0, index),
-		// 			...state.data.slice(index + 1),
-		// 		];
-		// 	})
-		// 	.addCase(destroy.rejected, (state, action) => {
-		// 		state.apiStatus = 'failed';
-		// 		state.apiMessage = action.error.message || null;
-		// 	});
-
-		// FetchAll
-		// .addCase(fetchAll.pending, (state, action) => {
-		// 	state.apiStatus = 'loading';
-		// })
-		// .addCase(fetchAll.fulfilled, (state, action) => {
-		// 	state.apiStatus = 'succeeded';
-		// 	state.data = [...action.payload];
-		// })
-		// .addCase(fetchAll.rejected, (state, action) => {
-		// 	state.apiStatus = 'failed';
-		// 	state.apiMessage = action.error.message || null;
-		// });
+			.addCase(boardsDestroy.fulfilled, (state, action: PayloadAction<any>) => {
+				boardsAdapter.removeOne(state, action.payload.id);
+			})
+			.addCase(boardsUpdate.fulfilled, (state, action: PayloadAction<any>) => {
+				boardsAdapter.updateOne(state, {
+					id: action.payload.id,
+					changes: { title: action.payload.title },
+				});
+			})
+			.addCase(
+				boardsFetchAll.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					boardsAdapter.upsertMany(state, action.payload.boards);
+				}
+			)
+			.addCase(
+				boardsFetchById.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					boardsAdapter.upsertMany(state, action.payload.boards);
+				}
+			);
 	},
 });
 
 // Thunks
 // Board Endpoints
 // Create
-const create = createAsyncThunk(
-	'boards/create',
+const boardsCreate = createAsyncThunk(
+	'boards/CREATE',
 	async (payload: Pick<BoardInterface, 'title'>) =>
 		await api
 			.post<BoardInterface>('/board', payload)
@@ -156,8 +105,8 @@ const create = createAsyncThunk(
 );
 
 // Update
-const update = createAsyncThunk(
-	'boards/update',
+const boardsUpdate = createAsyncThunk(
+	'boards/UPDATE',
 	async (payload: BoardUpdateInterface) =>
 		await api
 			.put<BoardInterface>(`/board/${payload.id}`, {
@@ -168,42 +117,32 @@ const update = createAsyncThunk(
 );
 
 // Delete
-const destroy = createAsyncThunk(
-	'boards/destroy',
-	async ({ id }: Pick<BoardInterface, 'id'>) =>
+const boardsDestroy = createAsyncThunk(
+	'boards/DESTROY',
+	async (payload: Pick<BoardInterface, 'id'>) =>
 		await api
-			.delete<string>(`/board/${id}`)
-			.then((response) => ({ id, data: response.data }))
+			.delete<string>(`/board/${payload.id}`)
+			.then((response) => ({ id: payload.id, data: response.data }))
 );
 
-// Get By Id
-const fetchById = createAsyncThunk(
-	'boards/getById',
+// fetchById
+const boardsFetchById = createAsyncThunk(
+	'boards/FETCH_BY_ID',
 	async (payload: Pick<BoardInterface, 'id'>) => {
 		const data = await api
 			.get<BoardInterface>(`/board/${payload.id}`)
 			.then((response) => response.data);
 		const normalizedData = normalize(data, boardsEntity);
-		console.log('FetchedById');
-		console.log(normalizedData);
 		return normalizedData.entities;
 	}
 );
 
-// Get All
-// const fetchAll = createAsyncThunk(
-// 	'boards/fetchAll',
-// 	async () =>
-// 		await api.get<BoardInterface[]>('/board').then((response) => response.data)
-// );
-
-const fetchAll = createAsyncThunk('boards/fetchAll', async () => {
+// fetchAll
+const boardsFetchAll = createAsyncThunk('boards/FETCH_ALL', async () => {
 	const data = await api
 		.get<BoardInterface[]>('/board')
 		.then((response) => response.data);
 	const normalizedData = normalize(data, [boardsEntity]);
-	console.log('FetchedAll');
-	console.log(normalizedData);
 	return normalizedData.entities;
 });
 
@@ -211,15 +150,24 @@ const fetchAll = createAsyncThunk('boards/fetchAll', async () => {
 // const { clearStatus } = boardsSlice.actions;
 
 // Exports
-// export { clearStatus, create, update, destroy, fetchAll };
-export { create, update, destroy, fetchById, fetchAll };
+export {
+	boardsCreate,
+	boardsUpdate,
+	boardsDestroy,
+	boardsFetchById,
+	boardsFetchAll,
+};
 
 // Export selector
 export const boardSelector = (state: RootState) => state.boards;
 
-export const { selectAll: selectAllBoards } = boardsAdapter.getSelectors(
-	(state: RootState) => state.boards
-);
+export const {
+	selectAll: selectBoardsAll,
+	selectTotal: selectBoardsTotal,
+	selectById: selectBoardsById,
+	selectIds: selectBoardsIds,
+	selectEntities: selectBoardsEntities,
+} = boardsAdapter.getSelectors((state: RootState) => state.boards);
 
 // Export boardsSlice Reducer as Default
 export default boardsSlice.reducer;

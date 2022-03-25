@@ -5,6 +5,9 @@ import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 import { login, clearStatus } from '../../features/user/userSlice';
 import useCookie from '../../hooks/useCookie';
 
+// Component
+import Header from '../Header';
+
 // MUI
 import {
 	Box,
@@ -16,6 +19,7 @@ import {
 	Avatar,
 	Alert,
 	CircularProgress,
+	Container,
 } from '@mui/material';
 import LoginSharpIcon from '@mui/icons-material/LoginSharp';
 
@@ -76,73 +80,82 @@ function Login() {
 
 	// Element
 	return (
-		<Grid item xs={12} md={4} sx={{ padding: 2 }}>
-			<Avatar
-				sx={{
-					mr: 'auto',
-					mb: 1,
-					ml: 'auto',
-					backgroundColor: 'secondary.main',
-				}}
-			>
-				<LoginSharpIcon />
-			</Avatar>
-			<Typography
-				component="h2"
-				sx={{ fontSize: '1.5rem', textAlign: 'center', mb: 3 }}
-			>
-				Login to your account
-			</Typography>
+		<>
+			<Header />
+			<Container component="main" sx={{ mt: 5 }}>
+				<Grid container>
+					<Grid item md></Grid>
+					<Grid item xs={12} md={4} sx={{ padding: 2 }}>
+						<Avatar
+							sx={{
+								mr: 'auto',
+								mb: 1,
+								ml: 'auto',
+								backgroundColor: 'secondary.main',
+							}}
+						>
+							<LoginSharpIcon />
+						</Avatar>
+						<Typography
+							component="h2"
+							sx={{ fontSize: '1.5rem', textAlign: 'center', mb: 3 }}
+						>
+							Login to your account
+						</Typography>
 
-			{apiStatus === 'failed' ? (
-				<Alert severity="error" sx={{ mb: 3 }}>
-					{apiMessage}
-				</Alert>
-			) : (
-				''
-			)}
+						{apiStatus === 'failed' ? (
+							<Alert severity="error" sx={{ mb: 3 }}>
+								{apiMessage}
+							</Alert>
+						) : (
+							''
+						)}
 
-			<Box component="form" autoComplete="off" onSubmit={handleLogin}>
-				<TextField
-					fullWidth
-					sx={{ mb: 2 }}
-					name="username"
-					label="Username"
-					placeholder="Username"
-					onChange={handleInput}
-					value={formValues['username']}
-					required
-				/>
-				<TextField
-					fullWidth
-					sx={{ mb: 2 }}
-					name="password"
-					label="Password"
-					type="password"
-					placeholder="Password"
-					autoComplete="off"
-					onChange={handleInput}
-					value={formValues['password']}
-					required
-				/>
-				{apiStatus === 'loading' ? (
-					<Box sx={{ display: 'flex', justifyContent: 'center' }}>
-						<CircularProgress />
-					</Box>
-				) : (
-					<Button type="submit" variant="contained" fullWidth>
-						Log in
-					</Button>
-				)}
-				<Link
-					component={RouterLink}
-					to="/register"
-					sx={{ display: 'block', textAlign: 'center', mt: 3 }}
-				>
-					Don't have an account? Register
-				</Link>
-			</Box>
-		</Grid>
+						<Box component="form" autoComplete="off" onSubmit={handleLogin}>
+							<TextField
+								fullWidth
+								sx={{ mb: 2 }}
+								name="username"
+								label="Username"
+								placeholder="Username"
+								onChange={handleInput}
+								value={formValues['username']}
+								required
+							/>
+							<TextField
+								fullWidth
+								sx={{ mb: 2 }}
+								name="password"
+								label="Password"
+								type="password"
+								placeholder="Password"
+								autoComplete="off"
+								onChange={handleInput}
+								value={formValues['password']}
+								required
+							/>
+							{apiStatus === 'loading' ? (
+								<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+									<CircularProgress />
+								</Box>
+							) : (
+								<Button type="submit" variant="contained" fullWidth>
+									Log in
+								</Button>
+							)}
+							<Link
+								component={RouterLink}
+								to="/register"
+								sx={{ display: 'block', textAlign: 'center', mt: 3 }}
+							>
+								Don't have an account? Register
+							</Link>
+						</Box>
+					</Grid>
+					<Grid item md></Grid>
+				</Grid>
+			</Container>
+		</>
 	);
 }
 

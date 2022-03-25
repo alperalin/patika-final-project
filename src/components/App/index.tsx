@@ -1,59 +1,69 @@
-import React, { useEffect } from 'react';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+// imports
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
-import { fetchById } from '../../features/boards/boardsSlice';
+// Store
+import {
+	boardsFetchById,
+	boardsUpdate,
+	selectBoardsById,
+} from '../../features/boards/boardsSlice';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
-import { selectListsByBoardId } from '../../features/lists/listsSlice';
+
+// Component
+import Header from '../Header';
+import ListItem from './ListItem';
 
 // MUI
-import {
-	Avatar,
-	AvatarGroup,
-	Box,
-	Card,
-	CardActionArea,
-	CardContent,
-	CircularProgress,
-	Grid,
-	Stack,
-	Typography,
-} from '@mui/material';
+import { Container, Grid } from '@mui/material';
 
 function App() {
+	// Variables
 	const { boardId } = useParams();
-	const lists = useAppSelector((state) =>
-		selectListsByBoardId(state, Number(boardId))
+
+	// Redux
+	const { id: userId } = useAppSelector((state) => state.user);
+	const board = useAppSelector((state) =>
+		selectBoardsById(state, Number(boardId))
 	);
+
 	const dispatch = useAppDispatch();
+	const isUserOwner = userId === board?.ownerId ? true : false;
 
-	// Boards cekiliyor
-	// useEffect(() => {
-	// 	if (apiStatus === 'idle') {
-	// 		dispatch(fetchAll());
-	// 	}
-	// }, [dispatch, apiStatus]);
-
+	// Functions
+	// First init
 	useEffect(() => {
-		dispatch(fetchById({ id: Number(boardId) }));
+		dispatch(boardsFetchById({ id: Number(boardId) }));
 	}, []);
 
+	function handleBoardTitleSave(title: string): void {
+		dispatch(boardsUpdate({ id: Number(boardId), title }));
+	}
+
+	// Element
 	return (
-		<Grid item xs={12} sx={{ padding: 2 }}>
-			<Typography component="h1" sx={{ fontSize: '2rem', textAlign: 'center' }}>
-				Welcome To {boardId}
-			</Typography>
+		<>
+			<Header
+				title={board?.title}
+				editable={isUserOwner}
+				onTitleSave={handleBoardTitleSave}
+			/>
+			<Container component="main" sx={{ mt: 5 }}>
+				<Grid container>
+					<Grid item xs={12}>
+						{board?.lists?.length > 0 &&
+							board.lists.map((listId: number) => (
+								<ListItem key={listId} listId={listId} />
+							))}
 
-			{lists &&
-				lists.map((list, index) => <span key={index}>{list.title}</span>)}
-
-			{/* {apiStatus === 'loading' && (
+						{/* {apiStatus === 'loading' && (
 				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 					<CircularProgress />
 				</Box>
 			)} */}
 
-			{/* {apiStatus === 'succeeded' && ( */}
-			{/* <Grid
+						{/* {apiStatus === 'succeeded' && ( */}
+						{/* <Grid
 					container
 					direction="row"
 					justifyContent="center"
@@ -63,8 +73,11 @@ function App() {
 				>
 					
 				</Grid> */}
-			{/* )} */}
-		</Grid>
+						{/* )} */}
+					</Grid>
+				</Grid>
+			</Container>
+		</>
 	);
 }
 

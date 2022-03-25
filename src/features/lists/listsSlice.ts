@@ -8,7 +8,7 @@ import {
 import type { RootState } from '../store';
 
 // Boards
-import { fetchById } from '../boards/boardsSlice';
+import { boardsFetchById } from '../boards/boardsSlice';
 
 // Interfaces
 import {
@@ -37,7 +37,7 @@ const listsSlice = createSlice({
 	},
 	extraReducers(builder) {
 		builder.addCase(
-			fetchById.fulfilled,
+			boardsFetchById.fulfilled,
 			(state, action: PayloadAction<any>) => {
 				if (action.payload.lists)
 					listsAdapter.upsertMany(state, action.payload.lists);
@@ -51,16 +51,21 @@ const listsSlice = createSlice({
 // const { clearStatus } = boardsSlice.actions;
 
 // Exports
-// export { clearStatus, create, update, destroy, fetchAll };
+// export { clearStatus, create, update, destroy, boardsFetchAll };
 
 // Export selector
 export const listsSelector = (state: RootState) => state.lists;
 
-export const { selectAll: selectAllLists, selectById: selectListsById } =
-	listsAdapter.getSelectors((state: RootState) => state.lists);
+export const {
+	selectAll: selectListsAll,
+	selectTotal: selectListsTotal,
+	selectById: selectListsById,
+	selectIds: selectListsIds,
+	selectEntities: selectListsEntities,
+} = listsAdapter.getSelectors((state: RootState) => state.lists);
 
 export const selectListsByBoardId = createSelector(
-	[selectAllLists, (state: RootState, boardId: number) => boardId],
+	[selectListsAll, (state: RootState, boardId: number) => boardId],
 	(lists, boardId) => lists.filter((list) => list.boardId === boardId)
 );
 

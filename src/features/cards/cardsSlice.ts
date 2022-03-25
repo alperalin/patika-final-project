@@ -7,7 +7,7 @@ import {
 import type { RootState } from '../store';
 
 // Boards
-import { fetchById } from '../boards/boardsSlice';
+import { boardsFetchById } from '../boards/boardsSlice';
 
 // Interfaces
 import {
@@ -36,7 +36,7 @@ const cardsSlice = createSlice({
 	},
 	extraReducers(builder) {
 		builder.addCase(
-			fetchById.fulfilled,
+			boardsFetchById.fulfilled,
 			(state, action: PayloadAction<any>) => {
 				if (action.payload.cards)
 					cardsAdapter.upsertMany(state, action.payload.cards);
@@ -50,13 +50,18 @@ const cardsSlice = createSlice({
 // const { clearStatus } = boardsSlice.actions;
 
 // Exports
-// export { clearStatus, create, update, destroy, fetchAll };
+// export { clearStatus, create, update, destroy, boardsFetchAll };
 
 // Export selector
 export const cardsSelector = (state: RootState) => state.cards;
 
-export const { selectAll: selectAllCards, selectById: selectCardsById } =
-	cardsAdapter.getSelectors((state: RootState) => state.cards);
+export const {
+	selectAll: selectCardsAll,
+	selectTotal: selectCardsTotal,
+	selectById: selectCardsById,
+	selectIds: selectCardsIds,
+	selectEntities: selectCardsEntities,
+} = cardsAdapter.getSelectors((state: RootState) => state.cards);
 
 // Export boardsSlice Reducer as Default
 export default cardsSlice.reducer;

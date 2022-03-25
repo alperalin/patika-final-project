@@ -8,7 +8,7 @@ import {
 import type { RootState } from '../store';
 
 // Boards
-import { fetchById } from '../boards/boardsSlice';
+import { boardsFetchById } from '../boards/boardsSlice';
 
 // Interfaces
 import {
@@ -37,7 +37,7 @@ const labelsSlice = createSlice({
 	},
 	extraReducers(builder) {
 		builder.addCase(
-			fetchById.fulfilled,
+			boardsFetchById.fulfilled,
 			(state, action: PayloadAction<any>) => {
 				if (action.payload.labels)
 					labelsAdapter.upsertMany(state, action.payload.labels);
@@ -51,18 +51,23 @@ const labelsSlice = createSlice({
 // const { clearStatus } = labelsSlice.actions;
 
 // Exports
-// export { clearStatus, create, update, destroy, fetchAll };
+// export { clearStatus, create, update, destroy, boardsFetchAll };
 
 // Export selector
 export const labelsSelector = (state: RootState) => state.labels;
 
-export const { selectAll: selectAllLabels, selectById: selectLabelsById } =
-	labelsAdapter.getSelectors((state: RootState) => state.labels);
+export const {
+	selectAll: selectLabelsAll,
+	selectTotal: selectLabelsTotal,
+	selectById: selectLabelsById,
+	selectIds: selectLabelsIds,
+	selectEntities: selectLabelsEntities,
+} = labelsAdapter.getSelectors((state: RootState) => state.labels);
 
-export const selectLabelsByCardId = createSelector(
-	[selectAllLabels, (state: RootState, cardId: number) => cardId],
-	(labels, cardId) => labels.filter((label) => label.cardId === cardId)
-);
+// export const selectLabelsByCardId = createSelector(
+// 	[selectAllLabels, (state: RootState, cardId: number) => cardId],
+// 	(labels, cardId) => labels.filter((label) => label.cardId === cardId)
+// );
 
 // Export boardsSlice Reducer as Default
 export default labelsSlice.reducer;

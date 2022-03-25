@@ -20,9 +20,9 @@ interface BoardReduxInterface {
 }
 
 interface BoardUpdateInterface {
-	id: Pick<BoardInterface, 'id'>;
-	title: Pick<BoardInterface, 'title'>;
-	members?: Pick<BoardInterface, 'members'>;
+	id: BoardInterface['id'];
+	title: BoardInterface['title'];
+	members?: BoardInterface['members'];
 }
 
 export type { BoardInterface, BoardUpdateInterface, BoardReduxInterface };
