@@ -13,6 +13,7 @@ import {
 	// clearStatus,
 	selectBoardsAll,
 } from '../../features/boards/boardsSlice';
+import { usersFetchAll } from '../../features/users/usersSlice';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 
 // MUI
@@ -43,6 +44,7 @@ function Board() {
 
 	// first init
 	useEffect(() => {
+		dispatch(usersFetchAll());
 		dispatch(boardsFetchAll());
 	}, []);
 

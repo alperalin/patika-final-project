@@ -23,7 +23,9 @@ import {
 // 	apiMessage: null,
 // };
 
-const listsAdapter = createEntityAdapter<any>();
+const listsAdapter = createEntityAdapter<any>({
+	sortComparer: (a, b) => a.order.localeCompare(b.order),
+});
 
 // Redux Slice for Lists
 const listsSlice = createSlice({

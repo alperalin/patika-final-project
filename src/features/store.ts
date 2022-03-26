@@ -10,6 +10,7 @@ import commentsReducer from './comments/commentsSlice';
 import labelsReducer from './labels/labelsSlice';
 import checklistsReducer from './checklists/checklistsSlice';
 import checklistItemsReducer from './checklistItems/checklistItemsSlice';
+import usersReducer from './users/usersSlice';
 
 const store = configureStore({
 	reducer: {
@@ -22,6 +23,7 @@ const store = configureStore({
 		labels: labelsReducer,
 		checklists: checklistsReducer,
 		checklistItems: checklistItemsReducer,
+		users: usersReducer,
 	},
 });
 
