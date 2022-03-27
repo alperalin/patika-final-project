@@ -22,7 +22,11 @@ import {
 // 	apiMessage: null,
 // };
 
-const cardsAdapter = createEntityAdapter<any>();
+const cardsAdapter = createEntityAdapter<any>({
+	sortComparer: (a, b) => {
+		return a['order'] - b['order'];
+	},
+});
 
 // Redux Slice for Cards
 const cardsSlice = createSlice({
@@ -33,13 +37,20 @@ const cardsSlice = createSlice({
 		// 	state.apiStatus = 'idle';
 		// 	return state;
 		// },
+		cardsChangeOrder: (state, action) => {
+			console.log(action);
+			cardsAdapter.updateOne(state, {
+				id: Number(action.payload.draggableId),
+				changes: { order: action.payload.destination.index },
+			});
+		},
 	},
 	extraReducers(builder) {
 		builder.addCase(
 			boardsFetchById.fulfilled,
 			(state, action: PayloadAction<any>) => {
 				if (action.payload.cards)
-					cardsAdapter.upsertMany(state, action.payload.cards);
+					cardsAdapter.setAll(state, action.payload.cards);
 				return state;
 			}
 		);
@@ -47,10 +58,10 @@ const cardsSlice = createSlice({
 });
 
 // Export Actions
-// const { clearStatus } = boardsSlice.actions;
+const { cardsChangeOrder } = cardsSlice.actions;
 
 // Exports
-// export { clearStatus, create, update, destroy, boardsFetchAll };
+export { cardsChangeOrder };
 
 // Export selector
 export const cardsSelector = (state: RootState) => state.cards;

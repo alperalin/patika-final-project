@@ -21,7 +21,7 @@ interface AppPropInterface {
 	board: any;
 }
 
-function CardItem({ board }: AppPropInterface) {
+function BoardItem({ board }: AppPropInterface) {
 	const { id: userId } = useAppSelector((state) => state.user);
 	const membersEntities = useAppSelector(selectMembersEntities);
 	const dispatch = useAppDispatch();
@@ -86,4 +86,4 @@ function CardItem({ board }: AppPropInterface) {
 	);
 }
 
-export default CardItem;
+export default BoardItem;

@@ -3,7 +3,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 // Component
 import Header from '../Header';
-import CardItem from '../App/CardItem';
+import BoardItem from '../App/BoardItem';
 
 // Store
 import {
@@ -93,15 +93,17 @@ function Board() {
 								mt={5}
 							>
 								{boards.map((board) => (
-									<Grid item key={board.id} xs={3}>
-										<CardItem board={board} />
+									<Grid item key={board.id} md={3} xs={4}>
+										<BoardItem board={board} />
 									</Grid>
 								))}
 
+								{/* Add New Card */}
 								<Grid
 									item
 									key={boards ? boards[boards.length - 1].id + 1 : 1}
-									xs={3}
+									md={3}
+									xs={4}
 								>
 									<Card
 										sx={{
@@ -120,7 +122,9 @@ function Board() {
 											onClick={createNewBoard}
 										>
 											<CardContent sx={{ width: '100%', textAlign: 'center' }}>
-												<AddBoxSharpIcon sx={{ fontSize: 64, mb: 1 }} />
+												<AddBoxSharpIcon
+													sx={{ fontSize: 64, color: '#1976d2', mb: 1 }}
+												/>
 												<Typography component="h5" variant="h5" gutterBottom>
 													Add New
 												</Typography>

@@ -1,6 +1,7 @@
 // imports
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 // Store
 import {
@@ -8,15 +9,32 @@ import {
 	boardsUpdate,
 	selectBoardsById,
 } from '../../features/boards/boardsSlice';
+import {
+	changeOrder,
+	listChangeCardOrder,
+} from '../../features/lists/listsSlice';
+import { cardsChangeOrder } from '../../features/cards/cardsSlice';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 
 // Component
 import Header from '../Header';
-import ListItem from './ListItem';
+import List from '../List';
 
 // MUI
 import { Container, Grid } from '@mui/material';
 
+// styles
+const listsContainerStyles = {
+	display: 'flex',
+	flexWrap: 'nowrap',
+	alignItems: 'flex-start',
+	maxWidth: '100%',
+	width: '100%',
+	height: '100vh',
+	overflow: 'scroll',
+};
+
+// Element
 function App() {
 	// Variables
 	const { boardId } = useParams();
@@ -36,8 +54,27 @@ function App() {
 		dispatch(boardsFetchById({ id: Number(boardId) }));
 	}, []);
 
+	// Handle Board Title Save
 	function handleBoardTitleSave(title: string): void {
 		dispatch(boardsUpdate({ id: Number(boardId), title }));
+	}
+
+	// DnD
+	function onDragEnd(result: any) {
+		// TODO: Re order lists
+
+		const { destination, source, draggableId } = result;
+
+		if (!destination) return;
+
+		if (
+			destination.droppableId === source.droppableId &&
+			destination.index === source.index
+		)
+			return;
+
+		console.log(destination, source, draggableId);
+		// dispatch(listChangeCardOrder({ destination, source, draggableId }));
 	}
 
 	// Element
@@ -48,33 +85,31 @@ function App() {
 				editable={isUserOwner}
 				onTitleSave={handleBoardTitleSave}
 			/>
-			<Container component="main" sx={{ mt: 5 }}>
+			<Container component="main" maxWidth={false} sx={{ mt: 3 }}>
 				<Grid container>
-					<Grid item xs={12}>
-						{board?.lists?.length > 0 &&
-							board.lists.map((listId: number) => (
-								<ListItem key={listId} listId={listId} />
-							))}
-
-						{/* {apiStatus === 'loading' && (
-				<Box sx={{ display: 'flex', justifyContent: 'center' }}>
-					<CircularProgress />
-				</Box>
-			)} */}
-
-						{/* {apiStatus === 'succeeded' && ( */}
-						{/* <Grid
-					container
-					direction="row"
-					justifyContent="center"
-					alignItems="stretch"
-					spacing={3}
-					mt={5}
-				>
-					
-				</Grid> */}
-						{/* )} */}
-					</Grid>
+					<DragDropContext onDragEnd={onDragEnd}>
+						<Droppable
+							droppableId="all-lists"
+							direction="horizontal"
+							type="list"
+						>
+							{(provided) => (
+								<Grid
+									item
+									{...provided.droppableProps}
+									ref={provided.innerRef}
+									xs={12}
+									sx={listsContainerStyles}
+								>
+									{board?.lists?.length > 0 &&
+										board.lists.map((listId: number) => (
+											<List key={listId} listId={listId} />
+										))}
+									{provided.placeholder}
+								</Grid>
+							)}
+						</Droppable>
+					</DragDropContext>
 				</Grid>
 			</Container>
 		</>

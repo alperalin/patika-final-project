@@ -24,7 +24,9 @@ import {
 // };
 
 const listsAdapter = createEntityAdapter<any>({
-	sortComparer: (a, b) => a.order.localeCompare(b.order),
+	sortComparer: (a, b) => {
+		return a['order'] - b['order'];
+	},
 });
 
 // Redux Slice for Lists
@@ -36,24 +38,54 @@ const listsSlice = createSlice({
 		// 	state.apiStatus = 'idle';
 		// 	return state;
 		// },
+		listChangeCardOrder: (state, action) => {
+			// 	console.log(action);
+			// 	const list = selectListsEntities(state.lists);
+			// 	console.log(list);
+		},
+		changeOrder: (state, action) => {
+			listsAdapter.updateMany(state, [
+				{
+					id: action.payload.dragItemId,
+					changes: { order: action.payload.hoverOrder },
+				},
+				{
+					id: action.payload.hoverItemId,
+					changes: { order: action.payload.dragOrder },
+				},
+			]);
+		},
 	},
 	extraReducers(builder) {
 		builder.addCase(
 			boardsFetchById.fulfilled,
 			(state, action: PayloadAction<any>) => {
 				if (action.payload.lists)
-					listsAdapter.upsertMany(state, action.payload.lists);
+					listsAdapter.setAll(state, action.payload.lists);
 				return state;
 			}
 		);
 	},
 });
 
+// Thunks
+// Update
+// const listUpdate = createAsyncThunk(
+// 	'boards/UPDATE',
+// 	async (payload: BoardUpdateInterface) =>
+// 		await api
+// 			.put<BoardInterface>(`/board/${payload.id}`, {
+// 				title: payload.title,
+// 				members: payload.members,
+// 			})
+// 			.then((response) => response.data)
+// );
+
 // Export Actions
-// const { clearStatus } = boardsSlice.actions;
+const { changeOrder, listChangeCardOrder } = listsSlice.actions;
 
 // Exports
-// export { clearStatus, create, update, destroy, boardsFetchAll };
+export { changeOrder, listChangeCardOrder };
 
 // Export selector
 export const listsSelector = (state: RootState) => state.lists;

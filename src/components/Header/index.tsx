@@ -27,6 +27,14 @@ interface HeaderInterface {
 	onTitleSave?: (title: string) => void;
 }
 
+// styles
+const headerStyles = {
+	backgroundColor: '#1976d2',
+	boxShadow:
+		'0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)',
+	transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+};
+
 function Header({
 	editable = false,
 	title = 'Kanban App',
@@ -60,18 +68,10 @@ function Header({
 
 	// Element
 	return (
-		<Box
-			component="header"
-			sx={{
-				backgroundColor: '#1976d2',
-				boxShadow:
-					'0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)',
-				transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-			}}
-		>
-			<Container>
+		<Box component="header" sx={headerStyles}>
+			<Container maxWidth={false}>
 				<Grid container alignItems="center" spacing={2} mt={0}>
-					<Grid item md={3} p={2}>
+					<Grid item xs={3} p={2}>
 						{isLoggedIn && (
 							<Button
 								component={RouterLink}
@@ -92,7 +92,7 @@ function Header({
 					</Grid>
 					<Grid
 						item
-						md={6}
+						xs={6}
 						display="flex"
 						flexWrap="wrap"
 						justifyContent="center"
@@ -155,7 +155,7 @@ function Header({
 						display="flex"
 						flexWrap="wrap"
 						justifyContent="flex-end"
-						md={3}
+						xs={3}
 						p={2}
 					>
 						{isLoggedIn && (
