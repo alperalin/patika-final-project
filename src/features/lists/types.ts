@@ -1,28 +1,45 @@
-import { ListInterface } from '../../api/list/types';
-import { UsersInterface } from '../../api/user/types';
+import { CardInterface } from '../../api/card';
+import { BoardInterface } from '../boards/types';
 
 // Interfaces
-interface BoardInterface {
+interface ListInterface {
 	id: number;
 	title: string;
-	ownerId: number;
-	owner: UsersInterface;
-	members: UsersInterface[];
-	lists: ListInterface[];
+	boardId: number;
+	board: BoardInterface;
+	cards: CardInterface[];
+	order: number | null;
 	createdAt: string;
 	updatedAt: string;
 }
 
-interface BoardReduxInterface {
-	data: BoardInterface[];
+interface ListReduxInterface {
+	data: ListInterface[];
 	apiStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
 	apiMessage: string | null;
 }
 
-interface BoardUpdateInterface {
-	id: Pick<BoardInterface, 'id'>;
-	title: Pick<BoardInterface, 'title'>;
-	members?: Pick<BoardInterface, 'members'>;
+interface ListCreateInterface {
+	title: ListInterface['title'];
+	order: ListInterface['order'];
+	boardId: ListInterface['boardId'];
 }
 
-export type { BoardInterface, BoardUpdateInterface, BoardReduxInterface };
+interface ListUpdateInterface {
+	id: ListInterface['id'];
+	title?: ListInterface['title'];
+	order?: ListInterface['order'];
+}
+
+interface ListDeleteInterface {
+	id: ListInterface['id'];
+	boardId: ListInterface['boardId'];
+}
+
+export type {
+	ListInterface,
+	ListCreateInterface,
+	ListUpdateInterface,
+	ListDeleteInterface,
+	ListReduxInterface,
+};

@@ -1,7 +1,7 @@
 // imports
 import { Link as RouterLink } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
-import { boardsDestroy } from '../../features/boards/boardsSlice';
+import { boardsDelete } from '../../features/boards/boardsSlice';
 import { selectMembersEntities } from '../../features/members/membersSlice';
 
 // Mui
@@ -65,7 +65,7 @@ function BoardItem({ board }: AppPropInterface) {
 					<Button
 						size="small"
 						color="warning"
-						onClick={() => dispatch(boardsDestroy({ id: board?.id }))}
+						onClick={() => dispatch(boardsDelete({ id: board?.id }))}
 					>
 						delete
 					</Button>

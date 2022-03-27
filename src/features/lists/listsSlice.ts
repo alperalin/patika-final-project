@@ -12,10 +12,13 @@ import { boardsFetchById } from '../boards/boardsSlice';
 
 // Interfaces
 import {
-	BoardInterface,
-	BoardUpdateInterface,
-	BoardReduxInterface,
+	ListInterface,
+	ListCreateInterface,
+	ListDeleteInterface,
+	ListReduxInterface,
+	ListUpdateInterface,
 } from './types';
+import api from '../../api';
 
 // const initialState: BoardReduxInterface = {
 // 	data: [],
@@ -38,37 +41,86 @@ const listsSlice = createSlice({
 		// 	state.apiStatus = 'idle';
 		// 	return state;
 		// },
-		listChangeCardOrder: (state, action) => {
-			// 	console.log(action);
-			// 	const list = selectListsEntities(state.lists);
-			// 	console.log(list);
-		},
-		changeOrder: (state, action) => {
-			listsAdapter.updateMany(state, [
-				{
-					id: action.payload.dragItemId,
-					changes: { order: action.payload.hoverOrder },
-				},
-				{
-					id: action.payload.hoverItemId,
-					changes: { order: action.payload.dragOrder },
-				},
-			]);
-		},
+		// listChangeCardOrder: (state, action) => {
+		// 	console.log(action);
+		// 	const list = selectListsEntities(state.lists);
+		// 	console.log(list);
+		// },
+		// changeOrder: (state, action) => {
+		// 	listsAdapter.updateMany(state, [
+		// 		{
+		// 			id: action.payload.dragItemId,
+		// 			changes: { order: action.payload.hoverOrder },
+		// 		},
+		// 		{
+		// 			id: action.payload.hoverItemId,
+		// 			changes: { order: action.payload.dragOrder },
+		// 		},
+		// 	]);
+		// },
 	},
 	extraReducers(builder) {
-		builder.addCase(
-			boardsFetchById.fulfilled,
-			(state, action: PayloadAction<any>) => {
-				if (action.payload.lists)
-					listsAdapter.setAll(state, action.payload.lists);
-				return state;
-			}
-		);
+		builder
+			.addCase(
+				boardsFetchById.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					if (action.payload.lists)
+						listsAdapter.upsertMany(state, action.payload.lists);
+					return state;
+				}
+			)
+			.addCase(listsCreate.fulfilled, (state, action: PayloadAction<any>) => {
+				listsAdapter.addOne(state, action.payload);
+			})
+			.addCase(listsUpdate.fulfilled, (state, action: PayloadAction<any>) => {
+				listsAdapter.updateOne(state, {
+					id: action.payload.id,
+					changes: { ...action.payload },
+				});
+			})
+			.addCase(listsDelete.fulfilled, (state, action: PayloadAction<any>) => {
+				listsAdapter.removeOne(state, action.payload.id);
+			});
 	},
 });
 
 // Thunks
+// Add a list
+const listsCreate = createAsyncThunk(
+	'lists/CREATE',
+	async (payload: ListCreateInterface) =>
+		await api
+			.post<ListInterface>('/list', {
+				title: payload.title,
+				order: payload.order,
+				boardId: payload.boardId,
+			})
+			.then((response) => response.data)
+);
+
+// Update a list
+const listsUpdate = createAsyncThunk(
+	'lists/UPDATE',
+	async (payload: ListUpdateInterface) =>
+		await api
+			.put<ListInterface>(`/list/${payload.id}`, {
+				title: payload.title,
+				order: payload.order,
+			})
+			.then((response) => response.data)
+);
+
+// Delete a list
+const listsDelete = createAsyncThunk(
+	'lists/DELETE',
+	async (payload: ListDeleteInterface) =>
+		await api.delete<string>(`/list/${payload.id}`).then((response) => ({
+			id: payload.id,
+			boardId: payload.boardId,
+			data: response.data,
+		}))
+);
+
 // Update
 // const listUpdate = createAsyncThunk(
 // 	'boards/UPDATE',
@@ -82,10 +134,11 @@ const listsSlice = createSlice({
 // );
 
 // Export Actions
-const { changeOrder, listChangeCardOrder } = listsSlice.actions;
+// const { changeOrder, listChangeCardOrder } = listsSlice.actions;
 
 // Exports
-export { changeOrder, listChangeCardOrder };
+// export { changeOrder, listChangeCardOrder };
+export { listsCreate, listsUpdate, listsDelete };
 
 // Export selector
 export const listsSelector = (state: RootState) => state.lists;

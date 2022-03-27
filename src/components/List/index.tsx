@@ -1,21 +1,21 @@
 // imports
-import { useRef } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { selectListsById } from '../../features/lists/listsSlice';
 import { useAppSelector } from '../../hooks/hooks';
 
 // Components
 import Card from '../Card';
-import AddListItem from '../App/AddListItem';
+import ListHeader from './ListHeader';
 
 // Mui
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 
 // Interface
 interface ListItemInterface {
 	listId: number;
 }
 
+// Styles
 const listStyles = {
 	display: 'flex',
 	flexDirection: 'column',
@@ -30,19 +30,16 @@ const listStyles = {
 	boxShadow: 3,
 };
 
-const headerStyles = {
-	padding: 2,
-	borderBottom: '1px solid black',
-	cursor: 'move',
-};
-
 const cardListStyles = { flexGrow: 1, minHeight: 200, padding: 2 };
 
+// Element
 function List({ listId }: ListItemInterface) {
-	const { id, title, order, cards } = useAppSelector((state) =>
+	// Redux
+	const { id, title, order, cards, boardId } = useAppSelector((state) =>
 		selectListsById(state, listId)
 	);
 
+	// Element
 	return (
 		<Draggable draggableId={id.toString()} index={order}>
 			{(provided) => (
@@ -51,15 +48,12 @@ function List({ listId }: ListItemInterface) {
 					ref={provided.innerRef}
 					sx={listStyles}
 				>
-					<Box
-						{...provided.dragHandleProps}
-						component="header"
-						sx={headerStyles}
-					>
-						<Typography component="h2" fontSize="1.25rem">
-							{title}
-						</Typography>
-					</Box>
+					<ListHeader
+						dnd={provided.dragHandleProps}
+						title={title}
+						listId={listId}
+						boardId={boardId}
+					/>
 					<Droppable droppableId={id.toString()} type="card">
 						{(provided) => (
 							<Box
@@ -75,7 +69,6 @@ function List({ listId }: ListItemInterface) {
 							</Box>
 						)}
 					</Droppable>
-					<AddListItem />
 				</Box>
 			)}
 		</Draggable>

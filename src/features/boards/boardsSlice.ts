@@ -4,6 +4,7 @@ import {
 	createSelector,
 	createAsyncThunk,
 	PayloadAction,
+	current,
 } from '@reduxjs/toolkit';
 import { normalize, schema } from 'normalizr';
 import type { RootState } from '../store';
@@ -18,6 +19,7 @@ import {
 	BoardReduxInterface,
 } from './types';
 import { AxiosResponse } from 'axios';
+import { listsCreate, listsDelete } from '../lists/listsSlice';
 
 // const initialState: BoardReduxInterface = {
 // 	data: [],
@@ -69,13 +71,13 @@ const boardsSlice = createSlice({
 			.addCase(boardsCreate.fulfilled, (state, action: PayloadAction<any>) => {
 				boardsAdapter.addOne(state, action.payload);
 			})
-			.addCase(boardsDestroy.fulfilled, (state, action: PayloadAction<any>) => {
+			.addCase(boardsDelete.fulfilled, (state, action: PayloadAction<any>) => {
 				boardsAdapter.removeOne(state, action.payload.id);
 			})
 			.addCase(boardsUpdate.fulfilled, (state, action: PayloadAction<any>) => {
 				boardsAdapter.updateOne(state, {
 					id: action.payload.id,
-					changes: { title: action.payload.title },
+					changes: { ...action.payload },
 				});
 			})
 			.addCase(
@@ -89,7 +91,18 @@ const boardsSlice = createSlice({
 				(state, action: PayloadAction<any>) => {
 					boardsAdapter.upsertMany(state, action.payload.boards);
 				}
-			);
+			)
+			.addCase(listsCreate.fulfilled, (state, action: PayloadAction<any>) => {
+				const { id, boardId } = action.payload;
+				state.entities[boardId].lists.push(id);
+			})
+			.addCase(listsDelete.fulfilled, (state, action: PayloadAction<any>) => {
+				const { id, boardId } = action.payload;
+				const index = state.entities[boardId].lists.findIndex(
+					(list: number) => list === id
+				);
+				state.entities[boardId].lists.splice(index, 1);
+			});
 	},
 });
 
@@ -117,8 +130,8 @@ const boardsUpdate = createAsyncThunk(
 );
 
 // Delete
-const boardsDestroy = createAsyncThunk(
-	'boards/DESTROY',
+const boardsDelete = createAsyncThunk(
+	'boards/DELETE',
 	async (payload: Pick<BoardInterface, 'id'>) =>
 		await api
 			.delete<string>(`/board/${payload.id}`)
@@ -153,7 +166,7 @@ const boardsFetchAll = createAsyncThunk('boards/FETCH_ALL', async () => {
 export {
 	boardsCreate,
 	boardsUpdate,
-	boardsDestroy,
+	boardsDelete,
 	boardsFetchById,
 	boardsFetchAll,
 };

@@ -10,15 +10,21 @@ import {
 	Box,
 	Button,
 	Container,
+	FormControl,
 	Grid,
 	IconButton,
+	Input,
+	InputAdornment,
 	InputBase,
+	InputLabel,
+	OutlinedInput,
 	Typography,
 } from '@mui/material';
 import AssessmentSharpIcon from '@mui/icons-material/AssessmentSharp';
 import EditSharpIcon from '@mui/icons-material/EditSharp';
 import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
 import SaveSharpIcon from '@mui/icons-material/SaveSharp';
+import board from '../../api/board';
 
 // Interface
 interface HeaderInterface {
@@ -42,8 +48,8 @@ function Header({
 }: HeaderInterface) {
 	// Local State
 	const [cookie, setCookie, deleteCookie] = useCookie('token', '');
-	const [inputValue, setInputValue] = useState<string>(title);
-	const [editingState, setEditingState] = useState<boolean>(false);
+	const [formState, setFormState] = useState<boolean>(false);
+	const [boardName, setBoardName] = useState<string>(title);
 
 	// Redux
 	const { isLoggedIn } = useAppSelector((state) => state.user);
@@ -60,10 +66,34 @@ function Header({
 		navigate('/');
 	}
 
+	// handle title form visibility
+	function changeFormVisibility() {
+		setFormState((prev) => !prev);
+	}
+
+	// handle input change
+	function handleInputChange(
+		event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+	) {
+		const { value } = event.target;
+		setBoardName(value);
+	}
+
 	// Handle Title Save
-	function handleTitleSave() {
-		setEditingState(false);
-		onTitleSave && onTitleSave(inputValue);
+	function handleBoardTitleChange(
+		event:
+			| React.FormEvent<HTMLFormElement>
+			| React.FocusEvent<HTMLTextAreaElement | HTMLInputElement, Element>
+	) {
+		event.preventDefault();
+
+		if (title === boardName || boardName === '') {
+			changeFormVisibility();
+			return;
+		}
+
+		onTitleSave && onTitleSave(boardName);
+		changeFormVisibility();
 	}
 
 	// Element
@@ -99,54 +129,92 @@ function Header({
 						alignItems="center"
 						p={2}
 					>
-						{editingState ? (
-							<InputBase
-								autoFocus
+						{formState ? (
+							<Box
+								component="form"
+								autoComplete="off"
+								onSubmit={handleBoardTitleChange}
 								sx={{
-									maxWidth: 250,
-									width: '100%',
 									color: '#fff',
-									borderBottom: '1px solid #fff',
+									borderColor: '#fff',
+									':focus': {
+										color: '#fff',
+										borderWidth: 1,
+										borderColor: '#fff',
+									},
+									'& label.Mui-focused': {
+										color: '#fff',
+										borderWidth: 1,
+										borderColor: '#fff',
+									},
 								}}
-								name="boardTitle"
-								onChange={(e) => setInputValue(e.currentTarget.value)}
-								value={inputValue}
-								required
-							/>
+							>
+								<FormControl
+									sx={{
+										width: '100%',
+										color: '#fff',
+										'& :before': {
+											borderColor: '#fff',
+										},
+										'& :after': {
+											borderColor: '#fff',
+										},
+									}}
+									variant="outlined"
+								>
+									<InputLabel htmlFor="boardName" sx={{ color: '#fff' }}>
+										Board name
+									</InputLabel>
+									<Input
+										autoFocus
+										fullWidth
+										required
+										id="boardName"
+										value={boardName}
+										onChange={handleInputChange}
+										onBlur={handleBoardTitleChange}
+										sx={{
+											color: '#fff',
+										}}
+										endAdornment={
+											<InputAdornment position="end">
+												<IconButton
+													type="submit"
+													aria-label="save list name"
+													edge="end"
+													sx={{
+														color: '#fff',
+													}}
+												>
+													<SaveSharpIcon />
+												</IconButton>
+											</InputAdornment>
+										}
+									/>
+								</FormControl>
+							</Box>
 						) : (
 							<Typography
 								variant="h1"
 								component="h1"
 								fontSize="1.5rem"
 								color="#fff"
+								onClick={changeFormVisibility}
 							>
 								{title}
 							</Typography>
 						)}
 
-						{editable && !editingState && (
+						{editable && !formState && (
 							<IconButton
 								aria-label="Change Board Title"
 								sx={{
 									color: '#fff',
 									pl: 2,
 								}}
-								onClick={() => setEditingState(true)}
+								onClick={changeFormVisibility}
 							>
 								<EditSharpIcon />
-							</IconButton>
-						)}
-
-						{editable && editingState && (
-							<IconButton
-								aria-label="Save Board Title"
-								sx={{
-									color: '#fff',
-									pl: 2,
-								}}
-								onClick={handleTitleSave}
-							>
-								<SaveSharpIcon />
 							</IconButton>
 						)}
 					</Grid>

@@ -9,16 +9,13 @@ import {
 	boardsUpdate,
 	selectBoardsById,
 } from '../../features/boards/boardsSlice';
-import {
-	changeOrder,
-	listChangeCardOrder,
-} from '../../features/lists/listsSlice';
-import { cardsChangeOrder } from '../../features/cards/cardsSlice';
+
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 
 // Component
 import Header from '../Header';
 import List from '../List';
+import AddList from '../List/AddList';
 
 // MUI
 import { Container, Grid } from '@mui/material';
@@ -105,6 +102,12 @@ function App() {
 										board.lists.map((listId: number) => (
 											<List key={listId} listId={listId} />
 										))}
+									<AddList
+										boardId={Number(boardId)}
+										newListOrder={
+											board?.lists?.length > 0 && board.lists.length
+										}
+									/>
 									{provided.placeholder}
 								</Grid>
 							)}
