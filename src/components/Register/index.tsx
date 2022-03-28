@@ -112,6 +112,7 @@ function Register() {
 
 						<Box component="form" autoComplete="off" onSubmit={handleRegister}>
 							<TextField
+								autoFocus
 								fullWidth
 								sx={{ mb: 2 }}
 								name="username"

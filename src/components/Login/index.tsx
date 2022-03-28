@@ -113,6 +113,7 @@ function Login() {
 
 						<Box component="form" autoComplete="off" onSubmit={handleLogin}>
 							<TextField
+								autoFocus
 								fullWidth
 								sx={{ mb: 2 }}
 								name="username"

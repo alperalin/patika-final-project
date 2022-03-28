@@ -64,7 +64,7 @@ function List({ listId }: ListItemInterface) {
 							>
 								{cards?.length > 0 &&
 									cards.map((cardId: number) => (
-										<Card key={cardId} cardId={cardId} />
+										<Card key={cardId} listTitle={title} cardId={cardId} />
 									))}
 								{provided.placeholder}
 							</Box>

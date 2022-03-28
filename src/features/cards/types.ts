@@ -32,6 +32,8 @@ interface CardCreateInterface {
 interface CardUpdateInterface {
 	id: CardInterface['id'];
 	title?: CardInterface['title'];
+	description?: CardInterface['description'];
+	duedate?: CardInterface['duedate'];
 	order?: CardInterface['order'];
 }
 

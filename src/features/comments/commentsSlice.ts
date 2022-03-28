@@ -7,15 +7,18 @@ import {
 } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
+// API
+import api from '../../api';
+
 // Boards
 import { boardsFetchById } from '../boards/boardsSlice';
 
 // Interfaces
+import { CommentInterface } from './types';
 import {
-	BoardInterface,
-	BoardUpdateInterface,
-	BoardReduxInterface,
-} from './types';
+	CommentCreateInterface,
+	CommentDeleteInterface,
+} from '../../api/comment/types';
 
 // const initialState: BoardReduxInterface = {
 // 	data: [],
@@ -36,22 +39,58 @@ const commentsSlice = createSlice({
 		// },
 	},
 	extraReducers(builder) {
-		builder.addCase(
-			boardsFetchById.fulfilled,
-			(state, action: PayloadAction<any>) => {
-				if (action.payload.comments)
-					commentsAdapter.upsertMany(state, action.payload.comments);
-				return state;
-			}
-		);
+		builder
+			.addCase(
+				commentsCreate.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					commentsAdapter.addOne(state, action.payload);
+				}
+			)
+			.addCase(
+				commentsDelete.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					commentsAdapter.removeOne(state, action.payload.id);
+				}
+			)
+			.addCase(
+				boardsFetchById.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					if (action.payload.comments)
+						commentsAdapter.upsertMany(state, action.payload.comments);
+					return state;
+				}
+			);
 	},
 });
+
+// Thunks
+const commentsCreate = createAsyncThunk(
+	'comments/CREATE',
+	async (payload: CommentCreateInterface) =>
+		await api
+			.post<CommentInterface>('/comment', {
+				cardId: payload.cardId,
+				message: payload.message,
+			})
+			.then((response) => response.data)
+);
+
+// Delete
+const commentsDelete = createAsyncThunk(
+	'comments/DELETE',
+	async (payload: CommentDeleteInterface) =>
+		await api.delete<string>(`/comment/${payload.id}`).then((response) => ({
+			id: payload.id,
+			cardId: payload.cardId,
+			data: response.data,
+		}))
+);
 
 // Export Actions
 // const { clearStatus } = commentsSlice.actions;
 
 // Exports
-// export { clearStatus, create, update, destroy, boardsFetchAll };
+export { commentsCreate, commentsDelete };
 
 // Export selector
 export const commentsSelector = (state: RootState) => state.comments;
@@ -63,11 +102,6 @@ export const {
 	selectIds: selectCommentsIds,
 	selectEntities: selectCommentsEntities,
 } = commentsAdapter.getSelectors((state: RootState) => state.comments);
-
-// export const selectCommentsByCardId = createSelector(
-// 	[selectAllComments, (state: RootState, cardId: number) => cardId],
-// 	(comments, cardId) => comments.filter((comment) => comment.cardId === cardId)
-// );
 
 // Export boardsSlice Reducer as Default
 export default commentsSlice.reducer;

@@ -3,6 +3,7 @@ import {
 	createEntityAdapter,
 	createAsyncThunk,
 	PayloadAction,
+	current,
 } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
@@ -18,6 +19,7 @@ import {
 	CardReduxInterface,
 } from './types';
 import api from '../../api';
+import { commentsCreate, commentsDelete } from '../comments/commentsSlice';
 
 // const initialState: BoardReduxInterface = {
 // 	data: [],
@@ -50,14 +52,6 @@ const cardsSlice = createSlice({
 	},
 	extraReducers(builder) {
 		builder
-			.addCase(
-				boardsFetchById.fulfilled,
-				(state, action: PayloadAction<any>) => {
-					if (action.payload.cards)
-						cardsAdapter.setAll(state, action.payload.cards);
-					return state;
-				}
-			)
 			.addCase(cardsCreate.fulfilled, (state, action: PayloadAction<any>) => {
 				cardsAdapter.addOne(state, action.payload);
 			})
@@ -69,7 +63,32 @@ const cardsSlice = createSlice({
 			})
 			.addCase(cardsDelete.fulfilled, (state, action: PayloadAction<any>) => {
 				cardsAdapter.removeOne(state, action.payload.id);
-			});
+			})
+			.addCase(
+				commentsCreate.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					const { id, cardId } = action.payload;
+					state.entities[cardId].comments.push(id);
+				}
+			)
+			.addCase(
+				commentsDelete.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					const { id, cardId } = action.payload;
+					const index = state.entities[cardId].comments.findIndex(
+						(comment: number) => comment === id
+					);
+					state.entities[cardId].comments.splice(index, 1);
+				}
+			)
+			.addCase(
+				boardsFetchById.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					if (action.payload.cards)
+						cardsAdapter.setAll(state, action.payload.cards);
+					return state;
+				}
+			);
 	},
 });
 
@@ -94,6 +113,8 @@ const cardsUpdate = createAsyncThunk(
 		await api
 			.put<CardInterface>(`/card/${payload.id}`, {
 				title: payload.title,
+				description: payload.description,
+				duedate: payload.duedate,
 				order: payload.order,
 			})
 			.then((response) => response.data)

@@ -14,4 +14,25 @@ interface CommentInterface {
 	updatedAt: string;
 }
 
-export type { CommentInterface };
+interface CommentReduxInterface {
+	data: CommentInterface[];
+	apiStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
+	apiMessage: string | null;
+}
+
+interface CommentCreateInterface {
+	cardId: CommentInterface['cardId'];
+	message: CommentInterface['message'];
+}
+
+interface CommentDeleteInterface {
+	id: CommentInterface['id'];
+	cardId: CommentInterface['cardId'];
+}
+
+export type {
+	CommentInterface,
+	CommentCreateInterface,
+	CommentDeleteInterface,
+	CommentReduxInterface,
+};
