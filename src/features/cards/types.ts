@@ -1,28 +1,49 @@
-import { ListInterface } from '../../api/list/types';
-import { UsersInterface } from '../../api/user/types';
+import { ChecklistInterface } from '../../api/checklist';
+import { CommentInterface } from '../../api/comment';
+import { LabelInterface } from '../../api/label';
 
 // Interfaces
-interface BoardInterface {
+interface CardInterface {
 	id: number;
 	title: string;
-	ownerId: number;
-	owner: UsersInterface;
-	members: UsersInterface[];
-	lists: ListInterface[];
+	listId: number;
+	description: string | null;
+	duedate: string | null;
+	order: number | null;
+	labels: LabelInterface[];
+	checklists: ChecklistInterface[];
+	comments: CommentInterface[];
 	createdAt: string;
 	updatedAt: string;
 }
 
-interface BoardReduxInterface {
-	data: BoardInterface[];
+interface CardReduxInterface {
+	data: CardInterface[];
 	apiStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
 	apiMessage: string | null;
 }
 
-interface BoardUpdateInterface {
-	id: Pick<BoardInterface, 'id'>;
-	title: Pick<BoardInterface, 'title'>;
-	members?: Pick<BoardInterface, 'members'>;
+interface CardCreateInterface {
+	title: CardInterface['title'];
+	order: CardInterface['order'];
+	listId: CardInterface['listId'];
 }
 
-export type { BoardInterface, BoardUpdateInterface, BoardReduxInterface };
+interface CardUpdateInterface {
+	id: CardInterface['id'];
+	title?: CardInterface['title'];
+	order?: CardInterface['order'];
+}
+
+interface CardDeleteInterface {
+	id: CardInterface['id'];
+	listId: CardInterface['listId'];
+}
+
+export type {
+	CardInterface,
+	CardCreateInterface,
+	CardUpdateInterface,
+	CardDeleteInterface,
+	CardReduxInterface,
+};

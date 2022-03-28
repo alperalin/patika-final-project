@@ -15,7 +15,7 @@ import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 // Component
 import Header from '../Header';
 import List from '../List';
-import AddList from '../List/AddList';
+import AddItem from '../List/AddItem';
 
 // MUI
 import { Container, Grid } from '@mui/material';
@@ -102,11 +102,10 @@ function App() {
 										board.lists.map((listId: number) => (
 											<List key={listId} listId={listId} />
 										))}
-									<AddList
-										boardId={Number(boardId)}
-										newListOrder={
-											board?.lists?.length > 0 && board.lists.length
-										}
+									<AddItem
+										type="list"
+										parentId={Number(boardId)}
+										order={board?.lists?.length > 0 && board.lists.length}
 									/>
 									{provided.placeholder}
 								</Grid>

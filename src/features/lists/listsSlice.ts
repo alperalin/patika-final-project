@@ -19,6 +19,7 @@ import {
 	ListUpdateInterface,
 } from './types';
 import api from '../../api';
+import { cardsCreate, cardsDelete } from '../cards/cardsSlice';
 
 // const initialState: BoardReduxInterface = {
 // 	data: [],
@@ -61,14 +62,6 @@ const listsSlice = createSlice({
 	},
 	extraReducers(builder) {
 		builder
-			.addCase(
-				boardsFetchById.fulfilled,
-				(state, action: PayloadAction<any>) => {
-					if (action.payload.lists)
-						listsAdapter.upsertMany(state, action.payload.lists);
-					return state;
-				}
-			)
 			.addCase(listsCreate.fulfilled, (state, action: PayloadAction<any>) => {
 				listsAdapter.addOne(state, action.payload);
 			})
@@ -80,7 +73,26 @@ const listsSlice = createSlice({
 			})
 			.addCase(listsDelete.fulfilled, (state, action: PayloadAction<any>) => {
 				listsAdapter.removeOne(state, action.payload.id);
-			});
+			})
+			.addCase(cardsCreate.fulfilled, (state, action: PayloadAction<any>) => {
+				const { id, listId } = action.payload;
+				state.entities[listId].cards.push(id);
+			})
+			.addCase(cardsDelete.fulfilled, (state, action: PayloadAction<any>) => {
+				const { id, listId } = action.payload;
+				const index = state.entities[listId].cards.findIndex(
+					(card: number) => card === id
+				);
+				state.entities[listId].cards.splice(index, 1);
+			})
+			.addCase(
+				boardsFetchById.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					if (action.payload.lists)
+						listsAdapter.upsertMany(state, action.payload.lists);
+					return state;
+				}
+			);
 	},
 });
 

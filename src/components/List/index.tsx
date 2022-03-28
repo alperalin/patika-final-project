@@ -9,6 +9,7 @@ import ListHeader from './ListHeader';
 
 // Mui
 import { Box } from '@mui/material';
+import ListFooter from './ListFooter';
 
 // Interface
 interface ListItemInterface {
@@ -69,6 +70,11 @@ function List({ listId }: ListItemInterface) {
 							</Box>
 						)}
 					</Droppable>
+					<ListFooter
+						type="card"
+						parentId={listId}
+						order={cards?.length > 0 && cards.length}
+					/>
 				</Box>
 			)}
 		</Draggable>

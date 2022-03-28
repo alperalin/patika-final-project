@@ -10,9 +10,9 @@ interface CardInterface {
 	description: string | null;
 	duedate: string | null;
 	order: number | null;
-	labels: LabelInterface[] | [];
-	checklists: ChecklistInterface[] | [];
-	comments: CommentInterface[] | [];
+	labels: LabelInterface[];
+	checklists: ChecklistInterface[];
+	comments: CommentInterface[];
 	createdAt: string;
 	updatedAt: string;
 }

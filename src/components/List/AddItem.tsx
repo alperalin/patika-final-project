@@ -2,13 +2,14 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { listsCreate } from '../../features/lists/listsSlice';
+import { cardsCreate } from '../../features/cards/cardsSlice';
 
 // Mui
 import { Box, Button, TextField } from '@mui/material';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 
 // Styles
-const addListStyles = {
+const typeListStyles = {
 	width: 300,
 	flex: '300px 0 0',
 	backgroundColor: '#dcefff',
@@ -18,22 +19,23 @@ const addListStyles = {
 	boxShadow: 3,
 };
 
-const addListButtonStyles = {
+const addItemButtonStyles = {
 	width: '100%',
 	textTransform: 'none',
 };
 
 // Interface
-interface AddListPropInterface {
-	boardId: number;
-	newListOrder: number;
+interface PropsInterface {
+	type: 'list' | 'card';
+	parentId: number;
+	order: number;
 }
 
 // Element
-function AddList({ boardId, newListOrder = 0 }: AddListPropInterface) {
+function AddItem({ type, parentId, order = 0 }: PropsInterface) {
 	// States
 	const [formState, setFormState] = useState<boolean>(false);
-	const [listName, setListName] = useState<string>('');
+	const [inputValue, setInputValue] = useState<string>('');
 
 	// Redux
 	const dispatch = useDispatch();
@@ -43,66 +45,78 @@ function AddList({ boardId, newListOrder = 0 }: AddListPropInterface) {
 		event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
 	) {
 		const { value } = event.target;
-		setListName(value);
+		setInputValue(value);
 	}
 
 	function changeFormVisibility() {
 		setFormState((prev) => !prev);
 	}
 
-	function handleAddList(event: React.FormEvent<HTMLFormElement>) {
+	function handleAddItem(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
-		// TODO: Dispatch List add
-		dispatch(
-			listsCreate({
-				title: listName,
-				order: Number(newListOrder),
-				boardId: boardId,
-			})
-		);
-		setListName('');
+		if (type === 'list') {
+			dispatch(
+				listsCreate({
+					title: inputValue,
+					order: Number(order),
+					boardId: parentId,
+				})
+			);
+		}
+
+		if (type === 'card') {
+			dispatch(
+				cardsCreate({
+					title: inputValue,
+					order: Number(order),
+					listId: parentId,
+				})
+			);
+		}
+
+		setInputValue('');
 		changeFormVisibility();
 	}
 
 	// Return
 	return (
-		<Box sx={addListStyles}>
+		<Box sx={type === 'list' ? typeListStyles : {}}>
 			{formState ? (
-				<Box component="form" autoComplete="off" onSubmit={handleAddList}>
+				<Box component="form" autoComplete="off" onSubmit={handleAddItem}>
 					<TextField
 						autoFocus
 						fullWidth
 						sx={{ mb: 2 }}
-						name="listName"
-						label="List Name"
-						placeholder="List Name"
+						name="inputValue"
+						label={type === 'list' ? 'List Name' : 'Card Name'}
+						placeholder={type === 'list' ? 'List Name' : 'Card Name'}
 						onChange={handleInputChange}
 						onBlur={changeFormVisibility}
-						value={listName}
+						value={inputValue}
 						required
 					/>
 					<Button
 						type="submit"
 						variant="contained"
 						endIcon={<AddSharpIcon />}
-						sx={addListButtonStyles}
+						sx={addItemButtonStyles}
 					>
 						Add
 					</Button>
 				</Box>
 			) : (
 				<Button
-					sx={addListButtonStyles}
+					sx={addItemButtonStyles}
 					variant="contained"
 					endIcon={<AddSharpIcon />}
 					onClick={changeFormVisibility}
 				>
-					Add a list
+					{type === 'list' ? 'Add a list' : 'Add a card'}
 				</Button>
 			)}
 		</Box>
 	);
 }
 
-export default AddList;
+export default AddItem;

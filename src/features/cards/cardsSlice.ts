@@ -11,10 +11,13 @@ import { boardsFetchById } from '../boards/boardsSlice';
 
 // Interfaces
 import {
-	BoardInterface,
-	BoardUpdateInterface,
-	BoardReduxInterface,
+	CardInterface,
+	CardCreateInterface,
+	CardUpdateInterface,
+	CardDeleteInterface,
+	CardReduxInterface,
 } from './types';
+import api from '../../api';
 
 // const initialState: BoardReduxInterface = {
 // 	data: [],
@@ -46,22 +49,72 @@ const cardsSlice = createSlice({
 		},
 	},
 	extraReducers(builder) {
-		builder.addCase(
-			boardsFetchById.fulfilled,
-			(state, action: PayloadAction<any>) => {
-				if (action.payload.cards)
-					cardsAdapter.setAll(state, action.payload.cards);
-				return state;
-			}
-		);
+		builder
+			.addCase(
+				boardsFetchById.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					if (action.payload.cards)
+						cardsAdapter.setAll(state, action.payload.cards);
+					return state;
+				}
+			)
+			.addCase(cardsCreate.fulfilled, (state, action: PayloadAction<any>) => {
+				cardsAdapter.addOne(state, action.payload);
+			})
+			.addCase(cardsUpdate.fulfilled, (state, action: PayloadAction<any>) => {
+				cardsAdapter.updateOne(state, {
+					id: action.payload.id,
+					changes: { ...action.payload },
+				});
+			})
+			.addCase(cardsDelete.fulfilled, (state, action: PayloadAction<any>) => {
+				cardsAdapter.removeOne(state, action.payload.id);
+			});
 	},
 });
+
+// Thunks
+// Add a card
+const cardsCreate = createAsyncThunk(
+	'cards/CREATE',
+	async (payload: CardCreateInterface) =>
+		await api
+			.post<CardInterface>('/card', {
+				title: payload.title,
+				order: payload.order,
+				listId: payload.listId,
+			})
+			.then((response) => response.data)
+);
+
+// Update a card
+const cardsUpdate = createAsyncThunk(
+	'cards/UPDATE',
+	async (payload: CardUpdateInterface) =>
+		await api
+			.put<CardInterface>(`/card/${payload.id}`, {
+				title: payload.title,
+				order: payload.order,
+			})
+			.then((response) => response.data)
+);
+
+// Delete a card
+const cardsDelete = createAsyncThunk(
+	'cards/DELETE',
+	async (payload: CardDeleteInterface) =>
+		await api.delete<string>(`/card/${payload.id}`).then((response) => ({
+			id: payload.id,
+			listId: payload.listId,
+			data: response.data,
+		}))
+);
 
 // Export Actions
 const { cardsChangeOrder } = cardsSlice.actions;
 
 // Exports
-export { cardsChangeOrder };
+export { cardsCreate, cardsUpdate, cardsDelete, cardsChangeOrder };
 
 // Export selector
 export const cardsSelector = (state: RootState) => state.cards;
