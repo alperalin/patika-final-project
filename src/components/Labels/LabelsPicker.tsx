@@ -1,5 +1,7 @@
 // imports
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAppSelector } from '../../hooks/hooks';
+import { selectLabelsAll } from '../../features/labels/labelsSlice';
 
 // Mui
 import {
@@ -14,22 +16,22 @@ import {
 	ListItemText,
 	Checkbox,
 } from '@mui/material';
-
 import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined';
-import { useAppSelector } from '../../hooks/hooks';
-import { selectLabelsAll } from '../../features/labels/labelsSlice';
 
 // Interface
 interface PropsInterface {
-	cardDueDate: Date | null;
-	onDueDateChange: (dueDate: Date | null) => void;
+	cardId: number;
+	cardLabels: number[];
+	onLabelsSave: (labelIds: number[]) => void;
 }
 
 // Element
-function LabelsPicker() {
+function LabelsPicker({ cardId, cardLabels, onLabelsSave }: PropsInterface) {
 	// States
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-	const [checked, setChecked] = useState([0]);
+	const [checked, setChecked] = useState<number[]>(
+		cardLabels?.length > 0 ? [...cardLabels] : []
+	);
 
 	// Redux
 	const labels = useAppSelector((state) => selectLabelsAll(state));
@@ -39,12 +41,15 @@ function LabelsPicker() {
 	const id = open ? 'simple-popover' : undefined;
 
 	// Functions
+	useEffect(() => {
+		onLabelsSave(checked);
+	}, [checked]);
+
 	function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
 		setAnchorEl(event.currentTarget);
 	}
 
 	function handleClose() {
-		// onDueDateChange(dueDate);
 		setAnchorEl(null);
 	}
 
@@ -78,7 +83,7 @@ function LabelsPicker() {
 					horizontal: 'left',
 				}}
 			>
-				<Box sx={{ p: 2 }}>
+				<Box sx={{ p: 0 }}>
 					<List
 						sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
 					>

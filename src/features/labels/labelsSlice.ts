@@ -6,23 +6,25 @@ import {
 	createSelector,
 } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
+import { normalize, schema } from 'normalizr';
 
 // Boards
 import { boardsFetchById } from '../boards/boardsSlice';
 
+// Api
+import api from '../../api';
+
 // Interfaces
 import {
-	BoardInterface,
-	BoardUpdateInterface,
-	BoardReduxInterface,
+	LabelInterface,
+	LabelReduxInterface,
+	CardLabelInterface,
 } from './types';
 
-// const initialState: BoardReduxInterface = {
-// 	data: [],
-// 	apiStatus: 'idle',
-// 	apiMessage: null,
-// };
+// Entity
+const labelsEntity = new schema.Entity('labels');
 
+// Adapter
 const labelsAdapter = createEntityAdapter<any>();
 
 // Redux Slice for Labels
@@ -37,7 +39,7 @@ const labelsSlice = createSlice({
 	},
 	extraReducers(builder) {
 		builder.addCase(
-			boardsFetchById.fulfilled,
+			labelsFetchAll.fulfilled,
 			(state, action: PayloadAction<any>) => {
 				if (action.payload.labels)
 					labelsAdapter.upsertMany(state, action.payload.labels);
@@ -47,11 +49,21 @@ const labelsSlice = createSlice({
 	},
 });
 
+// Thunks
+// fetchAll
+const labelsFetchAll = createAsyncThunk('labels/FETCH_ALL', async () => {
+	const data = await api
+		.get<LabelInterface[]>('/label')
+		.then((response) => response.data);
+	const normalizedData = normalize(data, [labelsEntity]);
+	return normalizedData.entities;
+});
+
 // Export Actions
 // const { clearStatus } = labelsSlice.actions;
 
 // Exports
-// export { clearStatus, create, update, destroy, boardsFetchAll };
+export { labelsEntity, labelsFetchAll };
 
 // Export selector
 export const labelsSelector = (state: RootState) => state.labels;

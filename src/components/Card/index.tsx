@@ -19,6 +19,7 @@ import {
 	Chip,
 } from '@mui/material';
 import AccessTimeSharpIcon from '@mui/icons-material/AccessTimeSharp';
+import Labels from '../Labels';
 
 // Interface
 interface PropsInterface {
@@ -70,15 +71,17 @@ const mainStyles = {
 
 function Card({ listTitle, cardId }: PropsInterface) {
 	// Redux
-	const { id, title, description, duedate, order, comments } = useAppSelector(
-		(state) => selectCardsById(state, cardId)
-	);
+	const { id, title, description, duedate, order, comments, labels } =
+		useAppSelector((state) => selectCardsById(state, cardId));
 	const dispatch = useAppDispatch();
 
 	// States
 	const [open, setOpen] = useState<boolean>(false);
 	const [newDueDate, setNewDueDate] = useState<Date | null>(
 		duedate ? new Date(duedate) : null
+	);
+	const [newLabels, setNewLabels] = useState<number[]>(
+		labels?.length > 0 ? [...labels] : []
 	);
 	const [formValues, setFormValues] = useState<{
 		title: string;
@@ -148,6 +151,10 @@ function Card({ listTitle, cardId }: PropsInterface) {
 		setNewDueDate(selectedDueDate);
 	}
 
+	function handleLabelsChange(labelsArray: number[]) {
+		setNewLabels([...labelsArray]);
+	}
+
 	return (
 		<>
 			<Draggable draggableId={id.toString()} index={order}>
@@ -182,7 +189,11 @@ function Card({ listTitle, cardId }: PropsInterface) {
 							cardDueDate={newDueDate}
 							onDueDateChange={handleDueDateChange}
 						/>
-						<LabelsPicker />
+						<LabelsPicker
+							cardId={id}
+							cardLabels={labels}
+							onLabelsSave={handleLabelsChange}
+						/>
 					</Box>
 
 					<Box component="main" sx={mainStyles}>
@@ -192,12 +203,29 @@ function Card({ listTitle, cardId }: PropsInterface) {
 						</Breadcrumbs>
 
 						{newDueDate && (
-							<Chip
-								icon={<AccessTimeSharpIcon />}
-								label={newDueDate.toDateString()}
-								color="warning"
-								sx={{ mb: 4 }}
-							/>
+							<Box sx={{ mb: 5 }}>
+								<Typography
+									component="h3"
+									variant="h5"
+									sx={{
+										display: 'flex',
+										flexWrap: 'wrap',
+										alignItems: 'center',
+										mb: 1,
+									}}
+								>
+									<AccessTimeSharpIcon sx={{ mr: 1 }} /> Duedate
+								</Typography>
+								<Chip
+									icon={<AccessTimeSharpIcon />}
+									label={newDueDate.toDateString()}
+									color="warning"
+								/>
+							</Box>
+						)}
+
+						{newLabels?.length > 0 && (
+							<Labels cardId={id} cardLabels={newLabels} />
 						)}
 
 						<Box sx={{ mb: 4 }}>

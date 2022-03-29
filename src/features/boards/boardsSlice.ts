@@ -4,10 +4,12 @@ import {
 	createSelector,
 	createAsyncThunk,
 	PayloadAction,
-	current,
 } from '@reduxjs/toolkit';
 import { normalize, schema } from 'normalizr';
 import type { RootState } from '../store';
+import { listsCreate, listsDelete } from '../lists/listsSlice';
+import { labelsEntity } from '../labels/labelsSlice';
+import { usersEntity } from '../users/usersSlice';
 
 // API
 import api from '../../api';
@@ -18,8 +20,6 @@ import {
 	BoardUpdateInterface,
 	BoardReduxInterface,
 } from './types';
-import { AxiosResponse } from 'axios';
-import { listsCreate, listsDelete } from '../lists/listsSlice';
 
 // const initialState: BoardReduxInterface = {
 // 	data: [],
@@ -28,15 +28,15 @@ import { listsCreate, listsDelete } from '../lists/listsSlice';
 // };
 
 // Entities
+const cardLabels = new schema.Entity('cardLabels');
 const checklistItems = new schema.Entity('checklistItems');
-const labels = new schema.Entity('labels');
 const comments = new schema.Entity('comments');
 const checklists = new schema.Entity('checklists', {
 	items: [checklistItems],
 });
 
 const cardsEntity = new schema.Entity('cards', {
-	labels: [labels],
+	labels: [labelsEntity],
 	comments: [comments],
 	checklists: [checklists],
 });
@@ -45,12 +45,12 @@ const listsEntity = new schema.Entity('lists', {
 	cards: [cardsEntity],
 });
 
-const membersEntity = new schema.Entity('members');
+// const membersEntity = new schema.Entity('members');
 
 const boardsEntity = new schema.Entity('boards', {
 	lists: [listsEntity],
 	cards: [listsEntity],
-	members: [membersEntity],
+	members: [usersEntity],
 });
 
 // Adapter

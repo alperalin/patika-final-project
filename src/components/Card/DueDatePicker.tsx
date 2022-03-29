@@ -55,6 +55,7 @@ function DueDatePicker({ cardDueDate, onDueDateChange }: PropsInterface) {
 				<Box sx={{ p: 2 }}>
 					<LocalizationProvider dateAdapter={AdapterDateFns}>
 						<DatePicker
+							autoFocus
 							label="Due Date"
 							value={dueDate}
 							onChange={(newDueDate) => {

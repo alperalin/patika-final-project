@@ -61,7 +61,7 @@ const usersFetchAll = createAsyncThunk('users/FETCH_ALL', async () => {
 // const { clearStatus } = usersSlice.actions;
 
 // Exports
-export { usersFetchAll };
+export { usersEntity, usersFetchAll };
 
 // Export selector
 export const usersSelector = (state: RootState) => state.users;

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 
 // Component
 import Header from '../Header';
@@ -12,7 +13,7 @@ import {
 	selectBoardsAll,
 } from '../../features/boards/boardsSlice';
 import { usersFetchAll } from '../../features/users/usersSlice';
-import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
+import { labelsFetchAll } from '../../features/labels/labelsSlice';
 
 // MUI
 import {
@@ -34,6 +35,7 @@ function Board() {
 
 	// first init
 	useEffect(() => {
+		dispatch(labelsFetchAll());
 		dispatch(usersFetchAll());
 		dispatch(boardsFetchAll());
 	}, []);

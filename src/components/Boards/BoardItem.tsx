@@ -2,7 +2,7 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 import { boardsDelete } from '../../features/boards/boardsSlice';
-import { selectMembersEntities } from '../../features/members/membersSlice';
+// import { selectMembersEntities } from '../../features/members/membersSlice';
 
 // Mui
 import {
@@ -23,7 +23,7 @@ interface AppPropInterface {
 
 function BoardItem({ board }: AppPropInterface) {
 	const { id: userId } = useAppSelector((state) => state.user);
-	const membersEntities = useAppSelector(selectMembersEntities);
+	// const membersEntities = useAppSelector(selectMembersEntities);
 	const dispatch = useAppDispatch();
 	const isOwner = userId === board?.ownerId ? true : false;
 
@@ -48,7 +48,7 @@ function BoardItem({ board }: AppPropInterface) {
 										fontSize: '1rem',
 									}}
 								>
-									{membersEntities[memberId].username.charAt(0)}
+									{/* {membersEntities[memberId].username.charAt(0)} */}
 								</Avatar>
 							))}
 					</AvatarGroup>
