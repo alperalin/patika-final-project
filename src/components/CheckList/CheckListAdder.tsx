@@ -58,7 +58,7 @@ function CheckListAdder({ cardId }: PropsInterface) {
 	// Return
 	return (
 		<>
-			<IconButton aria-label="Select a label" onClick={handleClick}>
+			<IconButton aria-label="Add a checklist" onClick={handleClick}>
 				<CheckBoxOutlinedIcon />
 			</IconButton>
 

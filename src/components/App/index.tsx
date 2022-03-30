@@ -9,7 +9,8 @@ import {
 	boardsUpdate,
 	selectBoardsById,
 } from '../../features/boards/boardsSlice';
-
+import { boardsMemberFetchAll } from '../../features/boardsMember/boardsMemberSlice';
+import { labelsFetchAll } from '../../features/labels/labelsSlice';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 
 // Component
@@ -49,6 +50,8 @@ function App() {
 	// First init
 	useEffect(() => {
 		dispatch(boardsFetchById({ id: Number(boardId) }));
+		dispatch(boardsMemberFetchAll({ boardId: Number(boardId) }));
+		dispatch(labelsFetchAll());
 	}, []);
 
 	// Handle Board Title Save
@@ -78,6 +81,8 @@ function App() {
 	return (
 		<>
 			<Header
+				boardId={Number(boardId)}
+				members={board?.members}
 				title={board?.title}
 				editable={isUserOwner}
 				onTitleSave={handleBoardTitleSave}

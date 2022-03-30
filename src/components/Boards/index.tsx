@@ -13,7 +13,6 @@ import {
 	selectBoardsAll,
 } from '../../features/boards/boardsSlice';
 import { usersFetchAll } from '../../features/users/usersSlice';
-import { labelsFetchAll } from '../../features/labels/labelsSlice';
 
 // MUI
 import {
@@ -35,7 +34,6 @@ function Board() {
 
 	// first init
 	useEffect(() => {
-		dispatch(labelsFetchAll());
 		dispatch(usersFetchAll());
 		dispatch(boardsFetchAll());
 	}, []);

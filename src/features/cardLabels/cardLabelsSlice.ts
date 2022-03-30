@@ -44,7 +44,7 @@ const cardLabelsSlice = createSlice({
 		builder.addCase(
 			boardsFetchById.fulfilled,
 			(state, action: PayloadAction<any>) => {
-				if (action.payload.labels.CardLabel)
+				if (action.payload.labels?.CardLabel)
 					cardLabelsAdapter.upsertMany(state, action.payload.labels.CardLabel);
 				return state;
 			}

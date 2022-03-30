@@ -3,7 +3,7 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 // Reducers
 import userReducer from './user/userSlice';
 import boardsReducer from './boards/boardsSlice';
-// import membersReducer from './members/membersSlice';
+import boardsMemberReducer from './boardsMember/boardsMemberSlice';
 import listsReducer from './lists/listsSlice';
 import cardsReducer from './cards/cardsSlice';
 import commentsReducer from './comments/commentsSlice';
@@ -17,7 +17,7 @@ const store = configureStore({
 	reducer: {
 		user: userReducer,
 		boards: boardsReducer,
-		// members: membersReducer,
+		boardsMember: boardsMemberReducer,
 		lists: listsReducer,
 		cards: cardsReducer,
 		comments: commentsReducer,

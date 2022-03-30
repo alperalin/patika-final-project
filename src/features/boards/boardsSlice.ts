@@ -6,9 +6,15 @@ import {
 	PayloadAction,
 } from '@reduxjs/toolkit';
 import { normalize, schema } from 'normalizr';
+
+// Store
 import type { RootState } from '../store';
 import { listsCreate, listsDelete, listsEntity } from '../lists/listsSlice';
 import { usersEntity } from '../users/usersSlice';
+import {
+	boardsMemberCreate,
+	boardsMemberDelete,
+} from '../boardsMember/boardsMemberSlice';
 
 // API
 import api from '../../api';
@@ -83,7 +89,24 @@ const boardsSlice = createSlice({
 					(list: number) => list === id
 				);
 				state.entities[boardId].lists.splice(index, 1);
-			});
+			})
+			.addCase(
+				boardsMemberCreate.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					const { userId, boardId } = action.payload;
+					state.entities[boardId].members.push(userId);
+				}
+			)
+			.addCase(
+				boardsMemberDelete.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					const { userId, boardId } = action.payload;
+					const index = state.entities[boardId].members.findIndex(
+						(member: number) => member === userId
+					);
+					state.entities[boardId].members.splice(index, 1);
+				}
+			);
 	},
 });
 

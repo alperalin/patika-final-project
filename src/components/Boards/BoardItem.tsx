@@ -2,12 +2,9 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 import { boardsDelete } from '../../features/boards/boardsSlice';
-// import { selectMembersEntities } from '../../features/members/membersSlice';
 
 // Mui
 import {
-	Avatar,
-	AvatarGroup,
 	Button,
 	Card,
 	CardActionArea,
@@ -16,45 +13,42 @@ import {
 	Typography,
 } from '@mui/material';
 import AssessmentSharpIcon from '@mui/icons-material/AssessmentSharp';
+import Members from '../Members';
 
+// Interface
 interface AppPropInterface {
 	board: any;
 }
 
+// Styles
+const cardStyles = {
+	width: '100%',
+	minHeight: 216,
+	height: '100%',
+};
+
+const cardHeaderStyles = { height: '50px', padding: 1 };
+
+const cardMainStyles = { width: '100%', textAlign: 'center' };
+
+const cardFooterStyles = { fontSize: 64, mb: 1 };
+
+// Elements
 function BoardItem({ board }: AppPropInterface) {
+	// Redux
 	const { id: userId } = useAppSelector((state) => state.user);
-	// const membersEntities = useAppSelector(selectMembersEntities);
 	const dispatch = useAppDispatch();
 	const isOwner = userId === board?.ownerId ? true : false;
 
+	// Return
 	return (
-		<Card
-			sx={{
-				width: '100%',
-				minHeight: 216,
-				height: '100%',
-			}}
-		>
+		<Card sx={cardStyles}>
 			<CardActionArea component={RouterLink} to={`/boards/${board?.id}`}>
-				<CardContent sx={{ height: '50px', padding: 1 }}>
-					<AvatarGroup max={2}>
-						{board?.members?.length &&
-							board?.members.map((memberId: number) => (
-								<Avatar
-									key={memberId}
-									sx={{
-										width: 30,
-										height: 30,
-										fontSize: '1rem',
-									}}
-								>
-									{/* {membersEntities[memberId].username.charAt(0)} */}
-								</Avatar>
-							))}
-					</AvatarGroup>
+				<CardContent sx={cardHeaderStyles}>
+					{board?.members?.length > 0 && <Members memberIds={board.members} />}
 				</CardContent>
-				<CardContent sx={{ width: '100%', textAlign: 'center' }}>
-					<AssessmentSharpIcon sx={{ fontSize: 64, mb: 1 }} />
+				<CardContent sx={cardMainStyles}>
+					<AssessmentSharpIcon sx={cardFooterStyles} />
 					<Typography component="h5" variant="h5" gutterBottom>
 						{board?.title}
 					</Typography>

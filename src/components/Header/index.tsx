@@ -1,9 +1,13 @@
 // Imports
 import { useState } from 'react';
-import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
-import { clearUser } from '../../features/user/userSlice';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import useCookie from '../../hooks/useCookie';
+import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
+import { clearUser } from '../../features/user/userSlice';
+
+// Components
+import Members from '../Members';
+import MembersMenu from '../Members/MembersMenu';
 
 // MUI
 import {
@@ -15,20 +19,21 @@ import {
 	IconButton,
 	Input,
 	InputAdornment,
-	InputBase,
 	InputLabel,
-	OutlinedInput,
 	Typography,
 } from '@mui/material';
 import AssessmentSharpIcon from '@mui/icons-material/AssessmentSharp';
 import EditSharpIcon from '@mui/icons-material/EditSharp';
 import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
 import SaveSharpIcon from '@mui/icons-material/SaveSharp';
+import PeopleSharpIcon from '@mui/icons-material/PeopleSharp';
 
 // Interface
 interface HeaderInterface {
 	editable?: boolean;
+	boardId?: number;
 	title?: string;
+	members?: number[];
 	onTitleSave?: (title: string) => void;
 }
 
@@ -40,9 +45,63 @@ const headerStyles = {
 	transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
 };
 
+const boardIconStyles = {
+	color: '#fff',
+	borderColor: '#fff',
+	':hover': {
+		borderColor: '#fff',
+	},
+};
+
+const formStyles = {
+	color: '#fff',
+	borderColor: '#fff',
+	':focus': {
+		color: '#fff',
+		borderWidth: 1,
+		borderColor: '#fff',
+	},
+	'& label.Mui-focused': {
+		color: '#fff',
+		borderWidth: 1,
+		borderColor: '#fff',
+	},
+};
+
+const formControlStyles = {
+	width: '100%',
+	color: '#fff',
+	'& :before': {
+		borderColor: '#fff',
+	},
+	'& :after': {
+		borderColor: '#fff',
+	},
+};
+
+const inputStyles = {
+	color: '#fff',
+};
+
+const logoutButtonStyles = {
+	color: '#fff',
+	borderColor: '#ffffff',
+	ml: 2,
+	':hover': {
+		borderColor: '#fff',
+	},
+};
+
+const editIconStyles = {
+	color: '#fff',
+	pl: 2,
+};
+
 function Header({
 	editable = false,
+	boardId,
 	title = 'Kanban App',
+	members,
 	onTitleSave,
 }: HeaderInterface) {
 	// Local State
@@ -100,20 +159,14 @@ function Header({
 		<Box component="header" sx={headerStyles}>
 			<Container maxWidth={false}>
 				<Grid container alignItems="center" spacing={2} mt={0}>
-					<Grid item xs={3} p={2}>
-						{isLoggedIn && (
+					<Grid item xs={4} p={2}>
+						{isLoggedIn && boardId && (
 							<Button
 								component={RouterLink}
 								to={'/boards'}
 								variant="outlined"
 								startIcon={<AssessmentSharpIcon />}
-								sx={{
-									color: '#fff',
-									borderColor: '#fff',
-									':hover': {
-										borderColor: '#fff',
-									},
-								}}
+								sx={boardIconStyles}
 							>
 								Boards
 							</Button>
@@ -121,7 +174,7 @@ function Header({
 					</Grid>
 					<Grid
 						item
-						xs={6}
+						xs={4}
 						display="flex"
 						flexWrap="wrap"
 						justifyContent="center"
@@ -133,35 +186,10 @@ function Header({
 								component="form"
 								autoComplete="off"
 								onSubmit={handleBoardTitleChange}
-								sx={{
-									color: '#fff',
-									borderColor: '#fff',
-									':focus': {
-										color: '#fff',
-										borderWidth: 1,
-										borderColor: '#fff',
-									},
-									'& label.Mui-focused': {
-										color: '#fff',
-										borderWidth: 1,
-										borderColor: '#fff',
-									},
-								}}
+								sx={formStyles}
 							>
-								<FormControl
-									sx={{
-										width: '100%',
-										color: '#fff',
-										'& :before': {
-											borderColor: '#fff',
-										},
-										'& :after': {
-											borderColor: '#fff',
-										},
-									}}
-									variant="outlined"
-								>
-									<InputLabel htmlFor="boardName" sx={{ color: '#fff' }}>
+								<FormControl sx={formControlStyles} variant="outlined">
+									<InputLabel htmlFor="boardName" sx={inputStyles}>
 										Board name
 									</InputLabel>
 									<Input
@@ -172,18 +200,14 @@ function Header({
 										value={boardName}
 										onChange={handleInputChange}
 										onBlur={handleBoardTitleChange}
-										sx={{
-											color: '#fff',
-										}}
+										sx={inputStyles}
 										endAdornment={
 											<InputAdornment position="end">
 												<IconButton
 													type="submit"
 													aria-label="save list name"
 													edge="end"
-													sx={{
-														color: '#fff',
-													}}
+													sx={inputStyles}
 												>
 													<SaveSharpIcon />
 												</IconButton>
@@ -207,10 +231,7 @@ function Header({
 						{editable && !formState && (
 							<IconButton
 								aria-label="Change Board Title"
-								sx={{
-									color: '#fff',
-									pl: 2,
-								}}
+								sx={editIconStyles}
 								onClick={changeFormVisibility}
 							>
 								<EditSharpIcon />
@@ -222,24 +243,37 @@ function Header({
 						display="flex"
 						flexWrap="wrap"
 						justifyContent="flex-end"
-						xs={3}
+						xs={4}
 						p={2}
 					>
 						{isLoggedIn && (
-							<Button
-								variant="outlined"
-								endIcon={<LogoutSharpIcon />}
-								sx={{
-									color: '#fff',
-									borderColor: '#ffffff',
-									':hover': {
-										borderColor: '#fff',
-									},
-								}}
-								onClick={handleLogout}
-							>
-								Logout
-							</Button>
+							<>
+								{members && members?.length > 0 && (
+									<>
+										<Typography
+											sx={{
+												display: 'flex',
+												alignItems: 'center',
+												color: '#fff',
+												mr: 2,
+											}}
+										>
+											<PeopleSharpIcon sx={{ mr: 1 }} /> Members
+										</Typography>
+										<Members maxAvatar={3} memberIds={members} />
+									</>
+								)}
+								<MembersMenu boardId={Number(boardId)} />
+
+								<Button
+									variant="outlined"
+									endIcon={<LogoutSharpIcon />}
+									sx={logoutButtonStyles}
+									onClick={handleLogout}
+								>
+									Logout
+								</Button>
+							</>
 						)}
 					</Grid>
 				</Grid>
