@@ -24,12 +24,6 @@ import {
 	ListUpdateInterface,
 } from './types';
 
-// const initialState: BoardReduxInterface = {
-// 	data: [],
-// 	apiStatus: 'idle',
-// 	apiMessage: null,
-// };
-
 // Entity
 const listsEntity = new schema.Entity('lists', {
 	cards: [cardsEntity],
@@ -37,37 +31,47 @@ const listsEntity = new schema.Entity('lists', {
 
 // Adapter
 const listsAdapter = createEntityAdapter<any>({
-	sortComparer: (a, b) => {
-		return a['order'] - b['order'];
-	},
+	sortComparer: (a, b) => a['order'] - b['order'],
 });
 
 // Redux Slice for Lists
 const listsSlice = createSlice({
 	name: 'lists',
-	initialState: listsAdapter.getInitialState(),
+	initialState: listsAdapter.getInitialState({
+		status: 'idle',
+		error: null,
+	}),
 	reducers: {
-		// clearStatus: (state) => {
-		// 	state.apiStatus = 'idle';
-		// 	return state;
-		// },
-		// listChangeCardOrder: (state, action) => {
-		// 	console.log(action);
-		// 	const list = selectListsEntities(state.lists);
-		// 	console.log(list);
-		// },
-		// changeOrder: (state, action) => {
-		// 	listsAdapter.updateMany(state, [
-		// 		{
-		// 			id: action.payload.dragItemId,
-		// 			changes: { order: action.payload.hoverOrder },
-		// 		},
-		// 		{
-		// 			id: action.payload.hoverItemId,
-		// 			changes: { order: action.payload.dragOrder },
-		// 		},
-		// 	]);
-		// },
+		listClearStatus: (state) => {
+			state.status = 'idle';
+		},
+		listChangeCardOrder: (state, action: PayloadAction<any>) => {
+			// Set status to pending
+			state.status = 'pending';
+
+			// Get payload
+			const { draggableId, destination, source } = action.payload;
+
+			// Get changed list
+			const changedList = state.entities[source.droppableId];
+
+			// Create a new array from changed list's cards
+			const newCardIds = Array.from(changedList.cards);
+
+			// Splice changed card from new array.
+			newCardIds.splice(source.index, 1);
+			// Put card to new position
+			newCardIds.splice(destination.index, 0, Number(draggableId));
+
+			// Update list adapter with new order
+			listsAdapter.updateOne(state, {
+				id: changedList.id,
+				changes: { cards: [...newCardIds] },
+			});
+
+			// set status to idle
+			state.status = 'succeeded';
+		},
 	},
 	extraReducers(builder) {
 		builder
@@ -142,24 +146,18 @@ const listsDelete = createAsyncThunk(
 		}))
 );
 
-// Update
-// const listUpdate = createAsyncThunk(
-// 	'boards/UPDATE',
-// 	async (payload: BoardUpdateInterface) =>
-// 		await api
-// 			.put<BoardInterface>(`/board/${payload.id}`, {
-// 				title: payload.title,
-// 				members: payload.members,
-// 			})
-// 			.then((response) => response.data)
-// );
-
 // Export Actions
-// const { changeOrder, listChangeCardOrder } = listsSlice.actions;
+const { listClearStatus, listChangeCardOrder } = listsSlice.actions;
 
 // Exports
-// export { changeOrder, listChangeCardOrder };
-export { listsEntity, listsCreate, listsUpdate, listsDelete };
+export {
+	listsEntity,
+	listsCreate,
+	listsUpdate,
+	listsDelete,
+	listClearStatus,
+	listChangeCardOrder,
+};
 
 // Export selector
 export const listsSelector = (state: RootState) => state.lists;

@@ -1,5 +1,5 @@
 // imports
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
@@ -11,6 +11,11 @@ import {
 } from '../../features/boards/boardsSlice';
 import { boardsMemberFetchAll } from '../../features/boardsMember/boardsMemberSlice';
 import { labelsFetchAll } from '../../features/labels/labelsSlice';
+import {
+	listChangeCardOrder,
+	listClearStatus,
+} from '../../features/lists/listsSlice';
+import { cardsUpdate } from '../../features/cards/cardsSlice';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 
 // Component
@@ -34,6 +39,9 @@ const listsContainerStyles = {
 
 // Element
 function App() {
+	// State
+	const [dndDropId, setDndDropId] = useState<number | null>(null);
+
 	// Variables
 	const { boardId } = useParams();
 
@@ -41,6 +49,9 @@ function App() {
 	const { id: userId } = useAppSelector((state) => state.user);
 	const board = useAppSelector((state) =>
 		selectBoardsById(state, Number(boardId))
+	);
+	const { status: listUpdateStatus, entities: listEntities } = useAppSelector(
+		(state) => state.lists
 	);
 
 	const dispatch = useAppDispatch();
@@ -54,6 +65,19 @@ function App() {
 		dispatch(labelsFetchAll());
 	}, []);
 
+	// Dispatch card order changes to api after redux changed
+	useEffect(() => {
+		if (dndDropId && listUpdateStatus === 'succeeded') {
+			const changedCardIds = listEntities[dndDropId].cards;
+
+			changedCardIds.forEach((cardId: number, index: number) => {
+				dispatch(cardsUpdate({ id: cardId, order: index }));
+			});
+
+			dispatch(listClearStatus());
+		}
+	}, [listUpdateStatus]);
+
 	// Handle Board Title Save
 	function handleBoardTitleSave(title: string): void {
 		dispatch(boardsUpdate({ id: Number(boardId), title }));
@@ -61,10 +85,10 @@ function App() {
 
 	// DnD
 	function onDragEnd(result: any) {
-		// TODO: Re order lists
-
+		// get DnD variables
 		const { destination, source, draggableId } = result;
 
+		// Controls
 		if (!destination) return;
 
 		if (
@@ -73,8 +97,10 @@ function App() {
 		)
 			return;
 
-		console.log(destination, source, draggableId);
-		// dispatch(listChangeCardOrder({ destination, source, draggableId }));
+		setDndDropId(Number(source.droppableId));
+
+		// Dispatch card order change in redux
+		dispatch(listChangeCardOrder({ destination, source, draggableId }));
 	}
 
 	// Element
@@ -90,32 +116,32 @@ function App() {
 			<Container component="main" maxWidth={false} sx={{ mt: 3 }}>
 				<Grid container>
 					<DragDropContext onDragEnd={onDragEnd}>
-						<Droppable
+						{/* <Droppable
 							droppableId="all-lists"
 							direction="horizontal"
 							type="list"
 						>
-							{(provided) => (
-								<Grid
-									item
-									{...provided.droppableProps}
-									ref={provided.innerRef}
-									xs={12}
-									sx={listsContainerStyles}
-								>
-									{board?.lists?.length > 0 &&
-										board.lists.map((listId: number) => (
-											<List key={listId} listId={listId} />
-										))}
-									<AddItem
-										type="list"
-										parentId={Number(boardId)}
-										order={board?.lists?.length > 0 && board.lists.length}
-									/>
-									{provided.placeholder}
-								</Grid>
-							)}
-						</Droppable>
+							{(provided) => ( */}
+						<Grid
+							item
+							// {...provided.droppableProps}
+							// ref={provided.innerRef}
+							xs={12}
+							sx={listsContainerStyles}
+						>
+							{board?.lists?.length > 0 &&
+								board.lists.map((listId: number) => (
+									<List key={listId} listId={listId} />
+								))}
+							<AddItem
+								type="list"
+								parentId={Number(boardId)}
+								order={board?.lists?.length > 0 && board.lists.length}
+							/>
+							{/* {provided.placeholder} */}
+						</Grid>
+						{/* )}
+						</Droppable>*/}
 					</DragDropContext>
 				</Grid>
 			</Container>

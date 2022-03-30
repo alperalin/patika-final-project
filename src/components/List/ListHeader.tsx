@@ -21,7 +21,7 @@ import SaveSharpIcon from '@mui/icons-material/SaveSharp';
 
 // interface
 interface propsInterface {
-	dnd: any;
+	dnd?: any;
 	title: string;
 	listId: number;
 	boardId: number;

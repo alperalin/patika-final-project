@@ -12,7 +12,7 @@ interface PropsInterface {
 }
 
 // Styles
-const footerStyles = { borderTop: '1px solid black', padding: 2 };
+const footerStyles = { borderTop: '1px solid black', padding: 2, mt: 'auto' };
 
 function ListFooter({ type, parentId, order = 0 }: PropsInterface) {
 	return (

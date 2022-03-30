@@ -29,6 +29,7 @@ import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 interface PropsInterface {
 	listTitle: string;
 	cardId: number;
+	index: number;
 }
 
 // Styles
@@ -37,8 +38,7 @@ const boxStyles = {
 	backgroundColor: '#666666',
 	borderRadius: '5px',
 	padding: 2,
-	mt: 3,
-	mb: 3,
+	mb: 2,
 	boxShadow: 2,
 };
 
@@ -75,110 +75,102 @@ const mainStyles = {
 	borderRadius: `0 0 ${modalStyles.borderRadius} ${modalStyles.borderRadius}`,
 };
 
-function Card({ listTitle, cardId }: PropsInterface) {
+function Card({ listTitle, cardId, index }: PropsInterface) {
 	// Redux
-	const {
-		id,
-		title,
-		description,
-		duedate,
-		order,
-		comments,
-		checklists,
-		labels,
-	} = useAppSelector((state) => selectCardsById(state, cardId));
+	const { id, title, description, duedate, comments, checklists, labels } =
+		useAppSelector((state) => selectCardsById(state, cardId));
 	const dispatch = useAppDispatch();
 
 	// States
-	const [open, setOpen] = useState<boolean>(false);
-	const [newDueDate, setNewDueDate] = useState<Date | null>(
-		duedate ? new Date(duedate) : null
-	);
-	const [newLabels, setNewLabels] = useState<number[]>(
-		labels?.length > 0 ? [...labels] : []
-	);
-	const [formValues, setFormValues] = useState<{
-		title: string;
-		description: string;
-	}>({
-		title: title,
-		description: description || '',
-	});
+	// const [open, setOpen] = useState<boolean>(false);
+	// const [newDueDate, setNewDueDate] = useState<Date | null>(
+	// 	duedate ? new Date(duedate) : null
+	// );
+	// const [newLabels, setNewLabels] = useState<number[]>(
+	// 	labels?.length > 0 ? [...labels] : []
+	// );
+	// const [formValues, setFormValues] = useState<{
+	// 	title: string;
+	// 	description: string;
+	// }>({
+	// 	title: title,
+	// 	description: description || '',
+	// });
 
-	// Functions
-	function handleOpen() {
-		setOpen(true);
-	}
+	// // Functions
+	// function handleOpen() {
+	// 	setOpen(true);
+	// }
 
-	function handleClose() {
-		if (
-			formValues['title'] !== title ||
-			formValues['description'] !== description
-		) {
-			if (newDueDate && Date.parse(duedate) !== Date.parse(`${newDueDate}`)) {
-				dispatch(
-					cardsUpdate({
-						id,
-						title: formValues['title'] || title,
-						description: formValues['description'] || '',
-						duedate: newDueDate && formatDate(newDueDate),
-					})
-				);
-				return;
-			}
+	// function handleClose() {
+	// 	if (
+	// 		formValues['title'] !== title ||
+	// 		formValues['description'] !== description
+	// 	) {
+	// 		if (newDueDate && Date.parse(duedate) !== Date.parse(`${newDueDate}`)) {
+	// 			dispatch(
+	// 				cardsUpdate({
+	// 					id,
+	// 					title: formValues['title'] || title,
+	// 					description: formValues['description'] || '',
+	// 					duedate: newDueDate && formatDate(newDueDate),
+	// 				})
+	// 			);
+	// 			return;
+	// 		}
 
-			// Dispatch Card Changes
-			dispatch(
-				cardsUpdate({
-					id,
-					title: formValues['title'] || title,
-					description: formValues['description'] || '',
-				})
-			);
-		}
+	// 		// Dispatch Card Changes
+	// 		dispatch(
+	// 			cardsUpdate({
+	// 				id,
+	// 				title: formValues['title'] || title,
+	// 				description: formValues['description'] || '',
+	// 			})
+	// 		);
+	// 	}
 
-		setOpen(false);
-	}
+	// 	setOpen(false);
+	// }
 
-	function handleInputChange(
-		event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-	): void {
-		const { name, value } = event.target;
+	// function handleInputChange(
+	// 	event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+	// ): void {
+	// 	const { name, value } = event.target;
 
-		setFormValues((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	}
+	// 	setFormValues((prev) => ({
+	// 		...prev,
+	// 		[name]: value,
+	// 	}));
+	// }
 
-	function formatDate(date: Date | string) {
-		if (typeof date === 'string') date = new Date(date);
+	// function formatDate(date: Date | string) {
+	// 	if (typeof date === 'string') date = new Date(date);
 
-		const year = date.getFullYear();
-		const month = date.getMonth() + 1;
-		const day = date.getDate();
+	// 	const year = date.getFullYear();
+	// 	const month = date.getMonth() + 1;
+	// 	const day = date.getDate();
 
-		return `${year}-${month < 10 ? `0${month}` : `${month}`}-${day}`;
-	}
+	// 	return `${year}-${month < 10 ? `0${month}` : `${month}`}-${day}`;
+	// }
 
-	function handleDueDateChange(selectedDueDate: Date | null) {
-		setNewDueDate(selectedDueDate);
-	}
+	// function handleDueDateChange(selectedDueDate: Date | null) {
+	// 	setNewDueDate(selectedDueDate);
+	// }
 
-	function handleLabelsChange(labelsArray: number[]) {
-		setNewLabels([...labelsArray]);
-	}
+	// function handleLabelsChange(labelsArray: number[]) {
+	// 	setNewLabels([...labelsArray]);
+	// }
 
 	return (
 		<>
-			<Draggable draggableId={id.toString()} index={order}>
+			<Draggable draggableId={cardId.toString()} index={index}>
 				{(provided) => (
 					<Box
 						{...provided.draggableProps}
 						{...provided.dragHandleProps}
 						ref={provided.innerRef}
 						sx={boxStyles}
-						onClick={handleOpen}
+						// onClick={handleOpen}
 					>
 						<Typography
 							component="h3"
@@ -191,7 +183,7 @@ function Card({ listTitle, cardId }: PropsInterface) {
 					</Box>
 				)}
 			</Draggable>
-			<Modal
+			{/* <Modal
 				open={open}
 				onClose={handleClose}
 				aria-labelledby="modal-modal-title"
@@ -279,7 +271,7 @@ function Card({ listTitle, cardId }: PropsInterface) {
 						<Comments cardId={id} comments={comments} />
 					</Box>
 				</Box>
-			</Modal>
+			</Modal> */}
 		</>
 	);
 }

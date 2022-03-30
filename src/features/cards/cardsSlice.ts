@@ -3,7 +3,7 @@ import {
 	createEntityAdapter,
 	createAsyncThunk,
 	PayloadAction,
-	current,
+	createSelector,
 } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 import { schema } from 'normalizr';
@@ -35,12 +35,6 @@ import {
 	CardReduxInterface,
 } from './types';
 
-// const initialState: BoardReduxInterface = {
-// 	data: [],
-// 	apiStatus: 'idle',
-// 	apiMessage: null,
-// };
-
 // Entity
 const cardsEntity = new schema.Entity('cards', {
 	labels: [labelsEntity],
@@ -50,29 +44,13 @@ const cardsEntity = new schema.Entity('cards', {
 });
 
 // Adapter
-const cardsAdapter = createEntityAdapter<any>({
-	sortComparer: (a, b) => {
-		return a['order'] - b['order'];
-	},
-});
+const cardsAdapter = createEntityAdapter<any>();
 
 // Redux Slice for Cards
 const cardsSlice = createSlice({
 	name: 'cards',
 	initialState: cardsAdapter.getInitialState(),
-	reducers: {
-		// clearStatus: (state) => {
-		// 	state.apiStatus = 'idle';
-		// 	return state;
-		// },
-		cardsChangeOrder: (state, action) => {
-			console.log(action);
-			cardsAdapter.updateOne(state, {
-				id: Number(action.payload.draggableId),
-				changes: { order: action.payload.destination.index },
-			});
-		},
-	},
+	reducers: {},
 	extraReducers(builder) {
 		builder
 			.addCase(cardsCreate.fulfilled, (state, action: PayloadAction<any>) => {
@@ -172,10 +150,10 @@ const cardsDelete = createAsyncThunk(
 );
 
 // Export Actions
-const { cardsChangeOrder } = cardsSlice.actions;
+// const {} = cardsSlice.actions;
 
 // Exports
-export { cardsEntity, cardsCreate, cardsUpdate, cardsDelete, cardsChangeOrder };
+export { cardsEntity, cardsCreate, cardsUpdate, cardsDelete };
 
 // Export selector
 export const cardsSelector = (state: RootState) => state.cards;
