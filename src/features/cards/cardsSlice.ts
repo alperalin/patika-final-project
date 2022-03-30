@@ -132,6 +132,7 @@ const cardsUpdate = createAsyncThunk(
 			.put<CardInterface>(`/card/${payload.id}`, {
 				title: payload.title,
 				description: payload.description,
+				listId: payload.listId,
 				duedate: payload.duedate,
 				order: payload.order,
 			})

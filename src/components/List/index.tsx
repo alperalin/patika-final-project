@@ -14,6 +14,7 @@ import ListFooter from './ListFooter';
 // Interface
 interface ListItemInterface {
 	listId: number;
+	index: number;
 }
 
 // Styles
@@ -31,17 +32,17 @@ const listStyles = {
 	boxShadow: 3,
 };
 
-const listMainStyles = { minHeight: 200, padding: 2 };
+const listMainStyles = { flexGrow: 1, minHeight: 200, padding: 2 };
 
 // Element
-function List({ listId }: ListItemInterface) {
+function List({ listId, index }: ListItemInterface) {
 	// Redux
 	const { title, boardId, cards } = useAppSelector((state) =>
 		selectListsById(state, listId)
 	);
 	// Element
 	return (
-		// <Draggable draggableId={id.toString()} index={order}>
+		// <Draggable draggableId={id.toString()} index={index}>
 		// 	{(provided) => (
 		<Box
 			// {...provided.draggableProps}

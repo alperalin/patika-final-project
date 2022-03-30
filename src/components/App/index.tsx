@@ -40,7 +40,7 @@ const listsContainerStyles = {
 // Element
 function App() {
 	// State
-	const [dndDropId, setDndDropId] = useState<number | null>(null);
+	const [dndObj, setDndObj] = useState<any>({});
 
 	// Variables
 	const { boardId } = useParams();
@@ -67,11 +67,38 @@ function App() {
 
 	// Dispatch card order changes to api after redux changed
 	useEffect(() => {
-		if (dndDropId && listUpdateStatus === 'succeeded') {
-			const changedCardIds = listEntities[dndDropId].cards;
+		if (dndObj && listUpdateStatus === 'succeeded') {
+			// Get list Ids
+			const startListId = Number(dndObj.source.droppableId);
+			const finishListId = Number(dndObj.destination.droppableId);
 
-			changedCardIds.forEach((cardId: number, index: number) => {
-				dispatch(cardsUpdate({ id: cardId, order: index }));
+			// Get lists
+			const startList = listEntities[startListId];
+			const finishList = listEntities[finishListId];
+
+			// If Lists are the same
+			// Dispatch only one list
+			if (startList === finishList) {
+				startList.cards.forEach((cardId: number, index: number) => {
+					dispatch(cardsUpdate({ id: cardId, order: index }));
+				});
+
+				dispatch(listClearStatus());
+				return;
+			}
+
+			// If List are not the same
+			// Dispatch for both of them
+			startList.cards.forEach((cardId: number, index: number) => {
+				dispatch(
+					cardsUpdate({ id: cardId, listId: startListId, order: index })
+				);
+			});
+
+			finishList.cards.forEach((cardId: number, index: number) => {
+				dispatch(
+					cardsUpdate({ id: cardId, listId: finishListId, order: index })
+				);
 			});
 
 			dispatch(listClearStatus());
@@ -97,7 +124,8 @@ function App() {
 		)
 			return;
 
-		setDndDropId(Number(source.droppableId));
+		// get
+		setDndObj({ destination, source, draggableId });
 
 		// Dispatch card order change in redux
 		dispatch(listChangeCardOrder({ destination, source, draggableId }));
@@ -130,8 +158,8 @@ function App() {
 							sx={listsContainerStyles}
 						>
 							{board?.lists?.length > 0 &&
-								board.lists.map((listId: number) => (
-									<List key={listId} listId={listId} />
+								board.lists.map((listId: number, index: number) => (
+									<List key={listId} listId={listId} index={index} />
 								))}
 							<AddItem
 								type="list"

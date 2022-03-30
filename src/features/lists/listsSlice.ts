@@ -52,24 +52,57 @@ const listsSlice = createSlice({
 			// Get payload
 			const { draggableId, destination, source } = action.payload;
 
-			// Get changed list
-			const changedList = state.entities[source.droppableId];
+			// Get list
+			const startList = state.entities[source.droppableId];
+			const finishList = state.entities[destination.droppableId];
 
-			// Create a new array from changed list's cards
-			const newCardIds = Array.from(changedList.cards);
+			// Dnd in same list
+			if (startList === finishList) {
+				// Create a new array from changed list's cards
+				const startCardIds = [...startList.cards];
 
-			// Splice changed card from new array.
-			newCardIds.splice(source.index, 1);
-			// Put card to new position
-			newCardIds.splice(destination.index, 0, Number(draggableId));
+				// Remove the moved card from from array
+				startCardIds.splice(source.index, 1);
+				// Put card to new position
+				startCardIds.splice(destination.index, 0, Number(draggableId));
 
-			// Update list adapter with new order
+				// Update start list with new order
+				listsAdapter.updateOne(state, {
+					id: startList.id,
+					changes: { cards: [...startCardIds] },
+				});
+
+				// set status to succeeded
+				state.status = 'succeeded';
+				return;
+			}
+
+			// Dnd in different lists
+			// Get start list's cards
+			const startCardIds = [...startList.cards];
+
+			// Remove the moved card from from array
+			startCardIds.splice(source.index, 1);
+
+			// Update start list without moved card
 			listsAdapter.updateOne(state, {
-				id: changedList.id,
-				changes: { cards: [...newCardIds] },
+				id: startList.id,
+				changes: { cards: [...startCardIds] },
 			});
 
-			// set status to idle
+			// Get finish list's cards
+			const finishCardIds = [...finishList.cards];
+
+			// Put moved card to it's new list
+			finishCardIds.splice(destination.index, 0, Number(draggableId));
+
+			// Update finish list with new order
+			listsAdapter.updateOne(state, {
+				id: finishList.id,
+				changes: { cards: [...finishCardIds] },
+			});
+
+			// set status to succeeded
 			state.status = 'succeeded';
 		},
 	},
