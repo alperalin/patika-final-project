@@ -43,7 +43,7 @@ function MembersMenu({ boardId }: PropsInterface) {
 			<Button
 				id="members-menu-button"
 				variant="outlined"
-				sx={{ color: '#fff' }}
+				sx={{ color: '#fff', border: 0, ml: 1 }}
 				aria-controls={open ? 'members-menu' : undefined}
 				aria-haspopup="true"
 				aria-expanded={open ? 'true' : undefined}

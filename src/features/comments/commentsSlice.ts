@@ -15,17 +15,11 @@ import api from '../../api';
 import { boardsFetchById } from '../boards/boardsSlice';
 
 // Interfaces
-import { CommentInterface } from './types';
 import {
+	CommentInterface,
 	CommentCreateInterface,
 	CommentDeleteInterface,
-} from '../../api/comment/types';
-
-// const initialState: BoardReduxInterface = {
-// 	data: [],
-// 	apiStatus: 'idle',
-// 	apiMessage: null,
-// };
+} from './types';
 
 // Entity
 const commentsEntity = new schema.Entity('comments');

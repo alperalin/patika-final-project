@@ -26,12 +26,6 @@ import {
 	BoardReduxInterface,
 } from './types';
 
-// const initialState: BoardReduxInterface = {
-// 	data: [],
-// 	apiStatus: 'idle',
-// 	apiMessage: null,
-// };
-
 // Entities
 // const membersEntity = new schema.Entity('members');
 const boardsEntity = new schema.Entity('boards', {

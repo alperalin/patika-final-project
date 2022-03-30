@@ -17,7 +17,14 @@ function Homepage() {
 				<Grid container>
 					<Grid item md></Grid>
 					<Grid item xs={12} sx={{ padding: 2, textAlign: 'center' }}>
-						<Typography component="h1" sx={{ fontSize: '2rem', mb: 2 }}>
+						<img
+							src={`./logo512.png`}
+							alt="Kanban App Logo"
+							loading="lazy"
+							width={300}
+						/>
+
+						<Typography component="h1" sx={{ fontSize: '2rem', mt: 2, mb: 2 }}>
 							Welcome{isLoggedIn ? `, ${username}` : ' to the kanban app'}
 						</Typography>
 

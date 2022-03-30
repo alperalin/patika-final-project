@@ -1,5 +1,5 @@
-import { ListInterface } from '../../api/list/types';
-import { UsersInterface } from '../../api/user/types';
+import { ListInterface } from '../lists/types';
+import { UsersInterface } from '../users/types';
 
 // Interfaces
 interface BoardInterface {

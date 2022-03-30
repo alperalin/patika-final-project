@@ -1,4 +1,4 @@
-import { CardInterface } from '../../api/card';
+import { CardInterface } from '../cards/types';
 import { BoardInterface } from '../boards/types';
 
 // Interfaces

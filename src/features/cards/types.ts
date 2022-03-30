@@ -1,6 +1,6 @@
-import { ChecklistInterface } from '../../api/checklist';
-import { CommentInterface } from '../../api/comment';
-import { LabelInterface } from '../../api/label';
+import { ChecklistInterface } from '../checklists/types';
+import { CommentInterface } from '../comments/types';
+import { LabelInterface } from '../labels/types';
 
 // Interfaces
 interface CardInterface {

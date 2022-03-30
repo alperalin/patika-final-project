@@ -3,6 +3,8 @@ import type { RootState } from '../store';
 
 // API
 import api from '../../api';
+
+// interfaces
 import {
 	UserReduxInterface,
 	UserInterface,
