@@ -8,6 +8,9 @@ import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 import DueDatePicker from './DueDatePicker';
 import Comments from '../Comments';
 import LabelsPicker from '../Labels/LabelsPicker';
+import CheckListAdder from '../CheckList/CheckListAdder';
+import Checklists from '../CheckList';
+import Labels from '../Labels';
 
 // Mui
 import {
@@ -17,9 +20,10 @@ import {
 	Typography,
 	TextField,
 	Chip,
+	IconButton,
 } from '@mui/material';
 import AccessTimeSharpIcon from '@mui/icons-material/AccessTimeSharp';
-import Labels from '../Labels';
+import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 
 // Interface
 interface PropsInterface {
@@ -53,6 +57,8 @@ const modalStyles = {
 };
 
 const headerStyles = {
+	display: 'flex',
+	alignItems: 'center',
 	bgcolor: '#231F47',
 	'& .MuiButtonBase-root': {
 		color: '#ffffff',
@@ -71,8 +77,16 @@ const mainStyles = {
 
 function Card({ listTitle, cardId }: PropsInterface) {
 	// Redux
-	const { id, title, description, duedate, order, comments, labels } =
-		useAppSelector((state) => selectCardsById(state, cardId));
+	const {
+		id,
+		title,
+		description,
+		duedate,
+		order,
+		comments,
+		checklists,
+		labels,
+	} = useAppSelector((state) => selectCardsById(state, cardId));
 	const dispatch = useAppDispatch();
 
 	// States
@@ -194,6 +208,14 @@ function Card({ listTitle, cardId }: PropsInterface) {
 							cardLabels={labels}
 							onLabelsSave={handleLabelsChange}
 						/>
+						<CheckListAdder cardId={id} />
+
+						<IconButton
+							onClick={handleClose}
+							sx={{ color: '#fff', ml: 'auto' }}
+						>
+							<CloseSharpIcon />
+						</IconButton>
 					</Box>
 
 					<Box component="main" sx={mainStyles}>
@@ -228,7 +250,7 @@ function Card({ listTitle, cardId }: PropsInterface) {
 							<Labels cardId={id} cardLabels={newLabels} />
 						)}
 
-						<Box sx={{ mb: 4 }}>
+						<Box sx={{ mb: 8 }}>
 							<TextField
 								fullWidth
 								sx={{ mb: 2 }}
@@ -251,6 +273,8 @@ function Card({ listTitle, cardId }: PropsInterface) {
 								required
 							/>
 						</Box>
+
+						{checklists?.length > 0 && <Checklists checklists={checklists} />}
 
 						<Comments cardId={id} comments={comments} />
 					</Box>

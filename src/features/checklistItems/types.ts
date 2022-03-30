@@ -1,28 +1,32 @@
-import { ListInterface } from '../../api/list/types';
-import { UsersInterface } from '../../api/user/types';
-
 // Interfaces
-interface BoardInterface {
+interface ChecklistItemInterface {
 	id: number;
+	checklistId: number;
 	title: string;
-	ownerId: number;
-	owner: UsersInterface;
-	members: UsersInterface[];
-	lists: ListInterface[];
+	isChecked: boolean;
 	createdAt: string;
 	updatedAt: string;
 }
 
-interface BoardReduxInterface {
-	data: BoardInterface[];
-	apiStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
-	apiMessage: string | null;
+interface ChecklistItemCreateInterface {
+	title: ChecklistItemInterface['title'];
+	checklistId: ChecklistItemInterface['checklistId'];
+	isChecked: ChecklistItemInterface['isChecked'];
 }
 
-interface BoardUpdateInterface {
-	id: Pick<BoardInterface, 'id'>;
-	title: Pick<BoardInterface, 'title'>;
-	members?: Pick<BoardInterface, 'members'>;
+interface ChecklistItemUpdateInterface {
+	id: ChecklistItemInterface['id'];
+	isChecked: ChecklistItemInterface['isChecked'];
 }
 
-export type { BoardInterface, BoardUpdateInterface, BoardReduxInterface };
+interface ChecklistItemDeleteInterface {
+	id: ChecklistItemInterface['id'];
+	checklistId: ChecklistItemInterface['checklistId'];
+}
+
+export type {
+	ChecklistItemInterface,
+	ChecklistItemCreateInterface,
+	ChecklistItemUpdateInterface,
+	ChecklistItemDeleteInterface,
+};

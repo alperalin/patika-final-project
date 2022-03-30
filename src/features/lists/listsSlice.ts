@@ -6,9 +6,14 @@ import {
 	createSelector,
 } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
+import { schema } from 'normalizr';
+
+// API
+import api from '../../api';
 
 // Boards
 import { boardsFetchById } from '../boards/boardsSlice';
+import { cardsCreate, cardsDelete, cardsEntity } from '../cards/cardsSlice';
 
 // Interfaces
 import {
@@ -18,8 +23,6 @@ import {
 	ListReduxInterface,
 	ListUpdateInterface,
 } from './types';
-import api from '../../api';
-import { cardsCreate, cardsDelete } from '../cards/cardsSlice';
 
 // const initialState: BoardReduxInterface = {
 // 	data: [],
@@ -27,6 +30,12 @@ import { cardsCreate, cardsDelete } from '../cards/cardsSlice';
 // 	apiMessage: null,
 // };
 
+// Entity
+const listsEntity = new schema.Entity('lists', {
+	cards: [cardsEntity],
+});
+
+// Adapter
 const listsAdapter = createEntityAdapter<any>({
 	sortComparer: (a, b) => {
 		return a['order'] - b['order'];
@@ -150,7 +159,7 @@ const listsDelete = createAsyncThunk(
 
 // Exports
 // export { changeOrder, listChangeCardOrder };
-export { listsCreate, listsUpdate, listsDelete };
+export { listsEntity, listsCreate, listsUpdate, listsDelete };
 
 // Export selector
 export const listsSelector = (state: RootState) => state.lists;

@@ -24,7 +24,6 @@ import AssessmentSharpIcon from '@mui/icons-material/AssessmentSharp';
 import EditSharpIcon from '@mui/icons-material/EditSharp';
 import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
 import SaveSharpIcon from '@mui/icons-material/SaveSharp';
-import board from '../../api/board';
 
 // Interface
 interface HeaderInterface {

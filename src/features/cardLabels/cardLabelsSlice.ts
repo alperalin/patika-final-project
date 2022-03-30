@@ -6,6 +6,7 @@ import {
 	PayloadAction,
 } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
+import { schema } from 'normalizr';
 
 // Boards
 import { boardsFetchById } from '../boards/boardsSlice';
@@ -23,6 +24,10 @@ import {
 // 	apiMessage: null,
 // };
 
+// Entity
+const cardLabelsEntity = new schema.Entity('cardLabels');
+
+// Adapter
 const cardLabelsAdapter = createEntityAdapter<any>();
 
 // Redux Slice for categories
@@ -39,8 +44,8 @@ const cardLabelsSlice = createSlice({
 		builder.addCase(
 			boardsFetchById.fulfilled,
 			(state, action: PayloadAction<any>) => {
-				if (action.payload.cardLabels)
-					cardLabelsAdapter.upsertMany(state, action.payload.cardLabels);
+				if (action.payload.labels.CardLabel)
+					cardLabelsAdapter.upsertMany(state, action.payload.labels.CardLabel);
 				return state;
 			}
 		);
@@ -51,7 +56,7 @@ const cardLabelsSlice = createSlice({
 // const { clearStatus } = boardsSlice.actions;
 
 // Exports
-// export { clearStatus, create, update, destroy, boardsFetchAll };
+export { cardLabelsEntity };
 
 // Export selector
 export const cardLabelsSelector = (state: RootState) => state.cardLabels;

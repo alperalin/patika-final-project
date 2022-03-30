@@ -6,9 +6,25 @@ import {
 	current,
 } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
+import { schema } from 'normalizr';
+
+// API
+import api from '../../api';
 
 // Boards
 import { boardsFetchById } from '../boards/boardsSlice';
+import {
+	commentsCreate,
+	commentsDelete,
+	commentsEntity,
+} from '../comments/commentsSlice';
+import {
+	checklistsCreate,
+	checklistsDelete,
+	checklistsEntity,
+} from '../checklists/checklistsSlice';
+import { labelsEntity } from '../labels/labelsSlice';
+import { cardLabelsEntity } from '../cardLabels/cardLabelsSlice';
 
 // Interfaces
 import {
@@ -18,8 +34,6 @@ import {
 	CardDeleteInterface,
 	CardReduxInterface,
 } from './types';
-import api from '../../api';
-import { commentsCreate, commentsDelete } from '../comments/commentsSlice';
 
 // const initialState: BoardReduxInterface = {
 // 	data: [],
@@ -27,6 +41,15 @@ import { commentsCreate, commentsDelete } from '../comments/commentsSlice';
 // 	apiMessage: null,
 // };
 
+// Entity
+const cardsEntity = new schema.Entity('cards', {
+	labels: [labelsEntity],
+	cardLabel: [cardLabelsEntity],
+	comments: [commentsEntity],
+	checklists: [checklistsEntity],
+});
+
+// Adapter
 const cardsAdapter = createEntityAdapter<any>({
 	sortComparer: (a, b) => {
 		return a['order'] - b['order'];
@@ -64,6 +87,23 @@ const cardsSlice = createSlice({
 			.addCase(cardsDelete.fulfilled, (state, action: PayloadAction<any>) => {
 				cardsAdapter.removeOne(state, action.payload.id);
 			})
+			.addCase(
+				checklistsCreate.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					const { id, cardId } = action.payload;
+					state.entities[cardId].checklists.push(id);
+				}
+			)
+			.addCase(
+				checklistsDelete.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					const { id, cardId } = action.payload;
+					const index = state.entities[cardId].checklists.findIndex(
+						(checklist: number) => checklist === id
+					);
+					state.entities[cardId].checklists.splice(index, 1);
+				}
+			)
 			.addCase(
 				commentsCreate.fulfilled,
 				(state, action: PayloadAction<any>) => {
@@ -135,7 +175,7 @@ const cardsDelete = createAsyncThunk(
 const { cardsChangeOrder } = cardsSlice.actions;
 
 // Exports
-export { cardsCreate, cardsUpdate, cardsDelete, cardsChangeOrder };
+export { cardsEntity, cardsCreate, cardsUpdate, cardsDelete, cardsChangeOrder };
 
 // Export selector
 export const cardsSelector = (state: RootState) => state.cards;

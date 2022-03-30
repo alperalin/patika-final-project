@@ -6,6 +6,7 @@ import {
 	createSelector,
 } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
+import { schema } from 'normalizr';
 
 // API
 import api from '../../api';
@@ -26,6 +27,10 @@ import {
 // 	apiMessage: null,
 // };
 
+// Entity
+const commentsEntity = new schema.Entity('comments');
+
+// Adapter
 const commentsAdapter = createEntityAdapter<any>();
 
 // Redux Slice for Comments
@@ -64,6 +69,7 @@ const commentsSlice = createSlice({
 });
 
 // Thunks
+// Create
 const commentsCreate = createAsyncThunk(
 	'comments/CREATE',
 	async (payload: CommentCreateInterface) =>
@@ -90,7 +96,7 @@ const commentsDelete = createAsyncThunk(
 // const { clearStatus } = commentsSlice.actions;
 
 // Exports
-export { commentsCreate, commentsDelete };
+export { commentsEntity, commentsCreate, commentsDelete };
 
 // Export selector
 export const commentsSelector = (state: RootState) => state.comments;

@@ -7,8 +7,7 @@ import {
 } from '@reduxjs/toolkit';
 import { normalize, schema } from 'normalizr';
 import type { RootState } from '../store';
-import { listsCreate, listsDelete } from '../lists/listsSlice';
-import { labelsEntity } from '../labels/labelsSlice';
+import { listsCreate, listsDelete, listsEntity } from '../lists/listsSlice';
 import { usersEntity } from '../users/usersSlice';
 
 // API
@@ -28,25 +27,7 @@ import {
 // };
 
 // Entities
-const cardLabels = new schema.Entity('cardLabels');
-const checklistItems = new schema.Entity('checklistItems');
-const comments = new schema.Entity('comments');
-const checklists = new schema.Entity('checklists', {
-	items: [checklistItems],
-});
-
-const cardsEntity = new schema.Entity('cards', {
-	labels: [labelsEntity],
-	comments: [comments],
-	checklists: [checklists],
-});
-
-const listsEntity = new schema.Entity('lists', {
-	cards: [cardsEntity],
-});
-
 // const membersEntity = new schema.Entity('members');
-
 const boardsEntity = new schema.Entity('boards', {
 	lists: [listsEntity],
 	cards: [listsEntity],

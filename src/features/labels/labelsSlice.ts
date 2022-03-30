@@ -9,7 +9,7 @@ import type { RootState } from '../store';
 import { normalize, schema } from 'normalizr';
 
 // Boards
-import { boardsFetchById } from '../boards/boardsSlice';
+import { cardLabelsEntity } from '../cardLabels/cardLabelsSlice';
 
 // Api
 import api from '../../api';
