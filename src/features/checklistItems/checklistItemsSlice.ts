@@ -139,6 +139,15 @@ export const {
 	(state: RootState) => state.checklistItems
 );
 
+export const selectItemsByChecklistId = createSelector(
+	[
+		selectChecklistItemsAll,
+		(state: RootState, checklistId: number) => checklistId,
+	],
+	(checklistItems, checklistId) =>
+		checklistItems.filter((checklist) => checklist.checklistId === checklistId)
+);
+
 export const selectCheckedItemsByChecklistId = createSelector(
 	[
 		selectChecklistItemsAll,

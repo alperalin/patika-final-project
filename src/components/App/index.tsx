@@ -20,8 +20,8 @@ import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 
 // Component
 import Header from '../Header';
-import List from '../List';
-import AddItem from '../List/AddItem';
+import ListItem from '../ListItem';
+import AddItem from '../ListItem/AddItem';
 
 // MUI
 import { Container, Grid } from '@mui/material';
@@ -144,32 +144,17 @@ function App() {
 			<Container component="main" maxWidth={false} sx={{ mt: 3 }}>
 				<Grid container>
 					<DragDropContext onDragEnd={onDragEnd}>
-						{/* <Droppable
-							droppableId="all-lists"
-							direction="horizontal"
-							type="list"
-						>
-							{(provided) => ( */}
-						<Grid
-							item
-							// {...provided.droppableProps}
-							// ref={provided.innerRef}
-							xs={12}
-							sx={listsContainerStyles}
-						>
+						<Grid item xs={12} sx={listsContainerStyles}>
 							{board?.lists?.length > 0 &&
 								board.lists.map((listId: number, index: number) => (
-									<List key={listId} listId={listId} index={index} />
+									<ListItem key={listId} listId={listId} index={index} />
 								))}
 							<AddItem
 								type="list"
 								parentId={Number(boardId)}
 								order={board?.lists?.length > 0 && board.lists.length}
 							/>
-							{/* {provided.placeholder} */}
 						</Grid>
-						{/* )}
-						</Droppable>*/}
 					</DragDropContext>
 				</Grid>
 			</Container>

@@ -76,10 +76,5 @@ export const {
 	selectEntities: selectLabelsEntities,
 } = labelsAdapter.getSelectors((state: RootState) => state.labels);
 
-// export const selectLabelsByCardId = createSelector(
-// 	[selectAllLabels, (state: RootState, cardId: number) => cardId],
-// 	(labels, cardId) => labels.filter((label) => label.cardId === cardId)
-// );
-
 // Export boardsSlice Reducer as Default
 export default labelsSlice.reducer;

@@ -4,7 +4,7 @@ import { selectListsById } from '../../features/lists/listsSlice';
 import { useAppSelector } from '../../hooks/hooks';
 
 // Components
-import Card from '../Card';
+import CardItem from '../CardItem';
 import ListHeader from './ListHeader';
 
 // Mui
@@ -22,11 +22,10 @@ const listStyles = {
 	display: 'flex',
 	flexDirection: 'column',
 	width: 300,
-	height: 600,
+	minHeight: 600,
 	flex: '300px 0 0',
-	overflow: 'scroll-y',
 	backgroundColor: '#dcefff',
-	borderRadius: '10px',
+	borderRadius: '5px',
 	padding: 0,
 	mr: 3,
 	boxShadow: 3,
@@ -35,26 +34,15 @@ const listStyles = {
 const listMainStyles = { flexGrow: 1, minHeight: 200, padding: 2 };
 
 // Element
-function List({ listId, index }: ListItemInterface) {
+function ListItem({ listId, index }: ListItemInterface) {
 	// Redux
 	const { title, boardId, cards } = useAppSelector((state) =>
 		selectListsById(state, listId)
 	);
 	// Element
 	return (
-		// <Draggable draggableId={id.toString()} index={index}>
-		// 	{(provided) => (
-		<Box
-			// {...provided.draggableProps}
-			// ref={provided.innerRef}
-			sx={listStyles}
-		>
-			<ListHeader
-				// dnd={provided.dragHandleProps}
-				title={title}
-				listId={listId}
-				boardId={boardId}
-			/>
+		<Box sx={listStyles}>
+			<ListHeader title={title} listId={listId} boardId={boardId} />
 			<Droppable droppableId={listId.toString()} type="card">
 				{(provided) => (
 					<Box
@@ -64,7 +52,7 @@ function List({ listId, index }: ListItemInterface) {
 					>
 						{cards?.length > 0 &&
 							cards.map((cardId: number, index: number) => (
-								<Card
+								<CardItem
 									key={cardId}
 									listTitle={title}
 									cardId={cardId}
@@ -81,9 +69,7 @@ function List({ listId, index }: ListItemInterface) {
 				order={cards?.length > 0 ? cards.length : 0}
 			/>
 		</Box>
-		// 	)}
-		// </Draggable>
 	);
 }
 
-export default List;
+export default ListItem;

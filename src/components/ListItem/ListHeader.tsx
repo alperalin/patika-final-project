@@ -30,7 +30,7 @@ interface propsInterface {
 // Styles
 const headerStyles = {
 	padding: 2,
-	borderBottom: '1px solid black',
+	borderBottom: '1px solid #A1A6C2',
 	cursor: 'move',
 };
 
