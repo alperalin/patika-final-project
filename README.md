@@ -44,7 +44,7 @@ Patika bitirme projesi kanban app.
 - Due Date bos girilemiyor.
 - VerifyToken calismiyor. API dogru olmasina ragmen sunucu 500 hatası donuyor.
 - Liste ve kart sırası karisik gelebiliyor.
-- Kullanici kendisi ile paylasilmis board'da diger uyeleri goremiyor. Sunucu kaynakli bir problem. Board -> Get List istedigi dogru veriyi donmuyor.
+- Kullanici kendisi ile paylasilmis board'da diger uyeleri goremiyor. Sunucu kaynakli bir problem. Board -> Get List istegi dogru veriyi donmuyor.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 
