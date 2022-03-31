@@ -110,7 +110,7 @@ const listsSlice = createSlice({
 	extraReducers(builder) {
 		builder
 			.addCase(listsCreate.fulfilled, (state, action: PayloadAction<any>) => {
-				listsAdapter.addOne(state, action.payload);
+				listsAdapter.addOne(state, { ...action.payload, cards: [] });
 			})
 			.addCase(listsUpdate.fulfilled, (state, action: PayloadAction<any>) => {
 				listsAdapter.updateOne(state, {
