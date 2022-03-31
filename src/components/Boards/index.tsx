@@ -16,9 +16,11 @@ import { usersFetchAll } from '../../features/users/usersSlice';
 
 // MUI
 import {
+	Box,
 	Card,
 	CardActionArea,
 	CardContent,
+	CircularProgress,
 	Container,
 	Grid,
 	Typography,
@@ -31,6 +33,9 @@ function Board() {
 	const boards = useAppSelector(selectBoardsAll);
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
+
+	const { status: boardsApiStatus } = useAppSelector((state) => state.boards);
+	const { status: usersApiStatus } = useAppSelector((state) => state.users);
 
 	// first init
 	useEffect(() => {
@@ -51,15 +56,26 @@ function Board() {
 			<Container component="main" sx={{ mt: 5 }}>
 				<Grid container>
 					<Grid item md></Grid>
-					<Grid item xs={12} sx={{ padding: 2 }}>
-						<Typography
-							component="h1"
-							sx={{ fontSize: '2rem', textAlign: 'center' }}
-						>
-							Select A Board
-						</Typography>
 
-						{boards?.length && (
+					{boardsApiStatus === 'loading' || usersApiStatus === 'loading' ? (
+						<Box
+							sx={{
+								display: 'flex',
+								justifyContent: 'center',
+								width: '100%',
+								mt: 5,
+							}}
+						>
+							<CircularProgress />
+						</Box>
+					) : (
+						<Grid item xs={12} sx={{ padding: 2 }}>
+							<Typography
+								component="h1"
+								sx={{ fontSize: '2rem', textAlign: 'center' }}
+							>
+								Select A Board
+							</Typography>
 							<Grid
 								container
 								direction="row"
@@ -68,16 +84,18 @@ function Board() {
 								spacing={3}
 								mt={5}
 							>
-								{boards.map((board) => (
-									<Grid item key={board.id} md={3} xs={4}>
-										<BoardItem board={board} />
-									</Grid>
-								))}
-
+								{boards?.length > 0 &&
+									boards.map((board) => (
+										<Grid item key={board.id} md={3} xs={4}>
+											<BoardItem board={board} />
+										</Grid>
+									))}
 								{/* Add New Card */}
 								<Grid
 									item
-									key={boards ? boards[boards.length - 1].id + 1 : 1}
+									key={
+										boards?.length > 0 ? boards[boards.length - 1].id + 1 : 1
+									}
 									md={3}
 									xs={4}
 								>
@@ -109,8 +127,8 @@ function Board() {
 									</Card>
 								</Grid>
 							</Grid>
-						)}
-					</Grid>
+						</Grid>
+					)}
 					<Grid item md></Grid>
 				</Grid>
 			</Container>

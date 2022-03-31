@@ -40,12 +40,15 @@ const boardsAdapter = createEntityAdapter<any>();
 // Redux Slice for Boards
 const boardsSlice = createSlice({
 	name: 'boards',
-	initialState: boardsAdapter.getInitialState(),
+	initialState: boardsAdapter.getInitialState({
+		status: 'idle',
+		error: null,
+	}),
 	reducers: {
-		// clearStatus: (state) => {
-		// 	state.apiStatus = 'idle';
-		// 	return state;
-		// },
+		clearStatus: (state) => {
+			state.status = 'idle';
+			state.error = null;
+		},
 	},
 	extraReducers(builder) {
 		builder
@@ -61,16 +64,28 @@ const boardsSlice = createSlice({
 					changes: { ...action.payload },
 				});
 			})
+			.addCase(boardsFetchAll.pending, (state, action) => {
+				state.status = 'loading';
+			})
 			.addCase(
 				boardsFetchAll.fulfilled,
 				(state, action: PayloadAction<any>) => {
-					boardsAdapter.upsertMany(state, action.payload.boards);
+					state.status = 'succeeded';
+					if (action.payload.boards)
+						boardsAdapter.upsertMany(state, action.payload.boards);
+					return state;
 				}
 			)
+			.addCase(boardsFetchById.pending, (state, action) => {
+				state.status = 'loading';
+			})
 			.addCase(
 				boardsFetchById.fulfilled,
 				(state, action: PayloadAction<any>) => {
-					boardsAdapter.upsertMany(state, action.payload.boards);
+					state.status = 'succeeded';
+					if (action.payload.boards)
+						boardsAdapter.upsertMany(state, action.payload.boards);
+					return state;
 				}
 			)
 			.addCase(listsCreate.fulfilled, (state, action: PayloadAction<any>) => {
@@ -158,7 +173,7 @@ const boardsFetchAll = createAsyncThunk('boards/FETCH_ALL', async () => {
 });
 
 // Export Actions
-// const { clearStatus } = boardsSlice.actions;
+const { clearStatus } = boardsSlice.actions;
 
 // Exports
 export {
@@ -167,6 +182,7 @@ export {
 	boardsDelete,
 	boardsFetchById,
 	boardsFetchAll,
+	clearStatus,
 };
 
 // Export selector

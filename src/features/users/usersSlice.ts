@@ -28,22 +28,27 @@ const usersAdapter = createEntityAdapter<any>();
 // Redux Slice for Users
 const usersSlice = createSlice({
 	name: 'users',
-	initialState: usersAdapter.getInitialState(),
+	initialState: usersAdapter.getInitialState({
+		status: 'idle',
+		error: null,
+	}),
 	reducers: {
-		// clearStatus: (state) => {
-		// 	state.apiStatus = 'idle';
-		// 	return state;
-		// },
+		clearStatus: (state) => {
+			state.status = 'idle';
+			state.error = null;
+		},
 	},
 	extraReducers(builder) {
-		builder.addCase(
-			usersFetchAll.fulfilled,
-			(state, action: PayloadAction<any>) => {
+		builder
+			.addCase(usersFetchAll.pending, (state, action) => {
+				state.status = 'loading';
+			})
+			.addCase(usersFetchAll.fulfilled, (state, action: PayloadAction<any>) => {
+				state.status = 'succeeded';
 				if (action.payload.users)
 					usersAdapter.upsertMany(state, action.payload.users);
 				return state;
-			}
-		);
+			});
 	},
 });
 
@@ -58,10 +63,10 @@ const usersFetchAll = createAsyncThunk('users/FETCH_ALL', async () => {
 });
 
 // Export Actions
-// const { clearStatus } = usersSlice.actions;
+const { clearStatus } = usersSlice.actions;
 
 // Exports
-export { usersEntity, usersFetchAll };
+export { usersEntity, usersFetchAll, clearStatus };
 
 // Export selector
 export const usersSelector = (state: RootState) => state.users;

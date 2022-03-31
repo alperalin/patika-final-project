@@ -2,9 +2,40 @@
 
 This is a kanban app project for patika react bootcamp.
 
-## TODO
+## Calisan özellikler
 
-- Yapilan islemlerden sonra notify gosterilebilir.
+### BOARD
+
+- Board ekleme,
+- Board güncelleme (Ad değiştirme),
+- Board silme,
+- Boarda başka kullanıcıyla paylaşma,
+- Boarddan kullanıcı çıkarma
+
+### LIST
+
+- Liste ekleme,
+- Listenin adını değiştirme,
+- Liste silme.
+
+### CARD
+
+- Card ekleme,
+- Listeye göre card ları gösterme
+- card güncelleme (title,description,duedata),
+- Carda checklist ekleme,
+- Checkliste checklist item ekleme,
+- Itemlerin boolean değerini değiştirme,
+- Cardı sürükle bırak ile başka bir listenin içine atma. (Güncelleme endpointi tetiklenecek)
+
+## Calismayan Özellikler
+
+- Listenin sırasını değiştirme
+- Carda label ekleme, carddan label çıkarma.
+- Due Date bos girilemiyor.
+- VerifyToken calismiyor. API dogru olmasina ragmen sunucu 500 hatası donuyor.
+- Liste ve kart sırası karisik gelebiliyor.
+- Kullanici kendisi ile paylasilmis board'da diger uyeleri goremiyor. Sunucu kaynakli bir problem. Board -> Get List istedigi dogru veriyi donmuyor.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 

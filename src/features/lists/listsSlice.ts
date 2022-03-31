@@ -44,6 +44,7 @@ const listsSlice = createSlice({
 	reducers: {
 		listClearStatus: (state) => {
 			state.status = 'idle';
+			state.error = null;
 		},
 		listChangeCardOrder: (state, action: PayloadAction<any>) => {
 			// Set status to pending

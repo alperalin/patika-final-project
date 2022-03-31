@@ -27,12 +27,15 @@ const boardsMemberAdapter = createEntityAdapter<any>();
 // Redux Slice for BoardsMember
 const boardsMemberSlice = createSlice({
 	name: 'boardsMember',
-	initialState: boardsMemberAdapter.getInitialState(),
+	initialState: boardsMemberAdapter.getInitialState({
+		status: 'idle',
+		error: null,
+	}),
 	reducers: {
-		// clearStatus: (state) => {
-		// 	state.apiStatus = 'idle';
-		// 	return state;
-		// },
+		clearStatus: (state) => {
+			state.status = 'idle';
+			state.error = null;
+		},
 	},
 	extraReducers(builder) {
 		builder
@@ -48,9 +51,13 @@ const boardsMemberSlice = createSlice({
 					boardsMemberAdapter.removeOne(state, action.payload.id);
 				}
 			)
+			.addCase(boardsMemberFetchAll.pending, (state, action) => {
+				state.status = 'loading';
+			})
 			.addCase(
 				boardsMemberFetchAll.fulfilled,
 				(state, action: PayloadAction<any>) => {
+					state.status = 'succeeded';
 					if (action.payload.boardsMember)
 						boardsMemberAdapter.setAll(state, action.payload.boardsMember);
 					return state;
@@ -103,7 +110,7 @@ const boardsMemberFetchAll = createAsyncThunk(
 );
 
 // Export Actions
-// const { clearStatus } = boardsMemberSlice.actions;
+const { clearStatus } = boardsMemberSlice.actions;
 
 // Exports
 export {
@@ -111,6 +118,7 @@ export {
 	boardsMemberCreate,
 	boardsMemberDelete,
 	boardsMemberFetchAll,
+	clearStatus,
 };
 
 // Export selector

@@ -31,6 +31,7 @@ const userSlice = createSlice({
 		},
 		clearStatus: (state) => {
 			state.apiStatus = 'idle';
+			state.apiMessage = null;
 			return state;
 		},
 	},
@@ -51,7 +52,7 @@ const userSlice = createSlice({
 				api.defaults.headers.common['Authorization'] = `Bearer ${state.token}`;
 			})
 			.addCase(login.rejected, (state, action) => {
-				state.apiStatus = 'failed';
+				state.apiStatus = 'idle';
 				state.apiMessage = action.error.message || null;
 			});
 
@@ -71,7 +72,7 @@ const userSlice = createSlice({
 				api.defaults.headers.common['Authorization'] = `Bearer ${state.token}`;
 			})
 			.addCase(register.rejected, (state, action) => {
-				state.apiStatus = 'failed';
+				state.apiStatus = 'idle';
 				state.apiMessage = action.error.message || null;
 			});
 
@@ -88,7 +89,7 @@ const userSlice = createSlice({
 				state.isLoggedIn = true;
 			})
 			.addCase(verify.rejected, (state, action) => {
-				state.apiStatus = 'failed';
+				state.apiStatus = 'idle';
 				state.isLoggedIn = false;
 			});
 	},

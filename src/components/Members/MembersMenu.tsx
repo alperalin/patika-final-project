@@ -15,6 +15,16 @@ interface PropsInterface {
 	boardId: number;
 }
 
+// Styles
+const shareButtonStyles = {
+	color: '#fff',
+	border: 0,
+	ml: 1,
+	'&:hover': {
+		border: 0,
+	},
+};
+
 function MembersMenu({ boardId }: PropsInterface) {
 	// States
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -43,7 +53,7 @@ function MembersMenu({ boardId }: PropsInterface) {
 			<Button
 				id="members-menu-button"
 				variant="outlined"
-				sx={{ color: '#fff', border: 0, ml: 1 }}
+				sx={shareButtonStyles}
 				aria-controls={open ? 'members-menu' : undefined}
 				aria-haspopup="true"
 				aria-expanded={open ? 'true' : undefined}

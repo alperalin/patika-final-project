@@ -30,22 +30,30 @@ const labelsAdapter = createEntityAdapter<any>();
 // Redux Slice for Labels
 const labelsSlice = createSlice({
 	name: 'labels',
-	initialState: labelsAdapter.getInitialState(),
+	initialState: labelsAdapter.getInitialState({
+		status: 'idle',
+		error: null,
+	}),
 	reducers: {
-		// clearStatus: (state) => {
-		// 	state.apiStatus = 'idle';
-		// 	return state;
-		// },
+		clearStatus: (state) => {
+			state.status = 'idle';
+			state.error = null;
+		},
 	},
 	extraReducers(builder) {
-		builder.addCase(
-			labelsFetchAll.fulfilled,
-			(state, action: PayloadAction<any>) => {
-				if (action.payload.labels)
-					labelsAdapter.upsertMany(state, action.payload.labels);
-				return state;
-			}
-		);
+		builder
+			.addCase(labelsFetchAll.pending, (state, action) => {
+				state.status = 'loading';
+			})
+			.addCase(
+				labelsFetchAll.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					state.status = 'succeeded';
+					if (action.payload.labels)
+						labelsAdapter.upsertMany(state, action.payload.labels);
+					return state;
+				}
+			);
 	},
 });
 
@@ -60,10 +68,10 @@ const labelsFetchAll = createAsyncThunk('labels/FETCH_ALL', async () => {
 });
 
 // Export Actions
-// const { clearStatus } = labelsSlice.actions;
+const { clearStatus } = labelsSlice.actions;
 
 // Exports
-export { labelsEntity, labelsFetchAll };
+export { labelsEntity, labelsFetchAll, clearStatus };
 
 // Export selector
 export const labelsSelector = (state: RootState) => state.labels;

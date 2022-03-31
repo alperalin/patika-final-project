@@ -223,7 +223,7 @@ function CardItem({ listTitle, cardId, index }: PropsInterface) {
 
 	return (
 		<>
-			<Draggable draggableId={cardId.toString()} index={index}>
+			<Draggable key={cardId} draggableId={cardId.toString()} index={index}>
 				{(provided) => (
 					<Box
 						{...provided.draggableProps}
@@ -263,7 +263,9 @@ function CardItem({ listTitle, cardId, index }: PropsInterface) {
 						<Box component="footer" sx={cardFooterStyles}>
 							<Box>
 								{labels?.length > 0 &&
-									labels.map((label: number) => <LabelsBox labelId={label} />)}
+									labels.map((label: number) => (
+										<LabelsBox key={label} labelId={label} />
+									))}
 							</Box>
 							<Box>
 								<CommentSharpIcon sx={{ mr: 1 }} />

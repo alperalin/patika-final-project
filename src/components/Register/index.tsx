@@ -59,6 +59,8 @@ function Register() {
 	function handleInput(
 		event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
 	) {
+		apiMessage && dispatch(clearStatus());
+
 		const { name, value } = event.target;
 
 		setFormValues((prev) => ({
@@ -102,12 +104,10 @@ function Register() {
 							Register an account
 						</Typography>
 
-						{apiStatus === 'failed' ? (
+						{apiMessage && (
 							<Alert severity="error" sx={{ mb: 3 }}>
 								{apiMessage}
 							</Alert>
-						) : (
-							''
 						)}
 
 						<Box component="form" autoComplete="off" onSubmit={handleRegister}>

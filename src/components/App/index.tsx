@@ -24,7 +24,7 @@ import ListItem from '../ListItem';
 import AddItem from '../ListItem/AddItem';
 
 // MUI
-import { Container, Grid } from '@mui/material';
+import { Box, CircularProgress, Container, Grid } from '@mui/material';
 
 // styles
 const listsContainerStyles = {
@@ -52,6 +52,11 @@ function App() {
 	);
 	const { status: listUpdateStatus, entities: listEntities } = useAppSelector(
 		(state) => state.lists
+	);
+	const { status: boardsApiStatus } = useAppSelector((state) => state.boards);
+	const { status: labelsApiStatus } = useAppSelector((state) => state.labels);
+	const { status: boardMemberApiStatus } = useAppSelector(
+		(state) => state.boardsMember
 	);
 
 	const dispatch = useAppDispatch();
@@ -143,19 +148,34 @@ function App() {
 			/>
 			<Container component="main" maxWidth={false} sx={{ mt: 3 }}>
 				<Grid container>
-					<DragDropContext onDragEnd={onDragEnd}>
-						<Grid item xs={12} sx={listsContainerStyles}>
-							{board?.lists?.length > 0 &&
-								board.lists.map((listId: number, index: number) => (
-									<ListItem key={listId} listId={listId} index={index} />
-								))}
-							<AddItem
-								type="list"
-								parentId={Number(boardId)}
-								order={board?.lists?.length > 0 && board.lists.length}
-							/>
-						</Grid>
-					</DragDropContext>
+					{boardsApiStatus === 'loading' ||
+					labelsApiStatus === 'loading' ||
+					boardMemberApiStatus === 'loading' ? (
+						<Box
+							sx={{
+								display: 'flex',
+								justifyContent: 'center',
+								width: '100%',
+								mt: 5,
+							}}
+						>
+							<CircularProgress />
+						</Box>
+					) : (
+						<DragDropContext onDragEnd={onDragEnd}>
+							<Grid item xs={12} sx={listsContainerStyles}>
+								{board?.lists?.length > 0 &&
+									board.lists.map((listId: number, index: number) => (
+										<ListItem key={listId} listId={listId} index={index} />
+									))}
+								<AddItem
+									type="list"
+									parentId={Number(boardId)}
+									order={board?.lists?.length > 0 && board.lists.length}
+								/>
+							</Grid>
+						</DragDropContext>
+					)}
 				</Grid>
 			</Container>
 		</>

@@ -59,8 +59,9 @@ function Login() {
 	function handleInput(
 		event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
 	): void {
-		const { name, value } = event.target;
+		apiMessage && dispatch(clearStatus());
 
+		const { name, value } = event.target;
 		setFormValues((prev) => ({
 			...prev,
 			[name]: value,
@@ -103,12 +104,10 @@ function Login() {
 							Login to your account
 						</Typography>
 
-						{apiStatus === 'failed' ? (
+						{apiMessage && (
 							<Alert severity="error" sx={{ mb: 3 }}>
 								{apiMessage}
 							</Alert>
-						) : (
-							''
 						)}
 
 						<Box component="form" autoComplete="off" onSubmit={handleLogin}>
