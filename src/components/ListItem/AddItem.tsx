@@ -92,7 +92,7 @@ function AddItem({ type, parentId, order = 0 }: PropsInterface) {
 						label={type === 'list' ? 'List Name' : 'Card Name'}
 						placeholder={type === 'list' ? 'List Name' : 'Card Name'}
 						onChange={handleInputChange}
-						onBlur={changeFormVisibility}
+						// onBlur={changeFormVisibility}
 						value={inputValue}
 						required
 					/>

@@ -257,7 +257,7 @@ function CardItem({ listTitle, cardId, index }: PropsInterface) {
 							)}
 							{checklists?.length > 0 &&
 								checklists.map((checklistId: number) => (
-									<ChecklistChip checklistId={checklistId} />
+									<ChecklistChip key={checklistId} checklistId={checklistId} />
 								))}
 						</Box>
 						<Box component="footer" sx={cardFooterStyles}>

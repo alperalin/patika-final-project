@@ -54,7 +54,12 @@ const cardsSlice = createSlice({
 	extraReducers(builder) {
 		builder
 			.addCase(cardsCreate.fulfilled, (state, action: PayloadAction<any>) => {
-				cardsAdapter.addOne(state, action.payload);
+				cardsAdapter.addOne(state, {
+					...action.payload,
+					labels: [],
+					checklists: [],
+					comments: [],
+				});
 			})
 			.addCase(cardsUpdate.fulfilled, (state, action: PayloadAction<any>) => {
 				cardsAdapter.updateOne(state, {

@@ -25,6 +25,7 @@ function ChecklistChip({ checklistId }: PropsInterface) {
 
 	return (
 		<Chip
+			key={checklistId}
 			icon={<CheckCircleOutlineIcon />}
 			label={label}
 			color="secondary"
