@@ -1,6 +1,15 @@
 # Patika Finale Project
 
-This is a kanban app project for patika react bootcamp.
+Patika bitirme projesi kanban app.
+
+## Kullanilan Araclar
+
+- TypeScript (olabildigince :)
+- Create react app
+- Redux
+- React Router
+- MUI Library
+- React Beautiful DnD
 
 ## Calisan özellikler
 
