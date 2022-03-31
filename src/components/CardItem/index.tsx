@@ -203,7 +203,9 @@ function CardItem({ listTitle, cardId, index }: PropsInterface) {
 		const month = date.getMonth() + 1;
 		const day = date.getDate();
 
-		return `${year}-${month < 10 ? `0${month}` : `${month}`}-${day}`;
+		return `${year}-${month < 10 ? `0${month}` : month}-${
+			day < 10 ? `0${day}` : day
+		}`;
 	}
 
 	function handleDueDateChange(selectedDueDate: Date | null) {
