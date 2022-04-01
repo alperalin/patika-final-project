@@ -24,7 +24,11 @@ import {
 	checklistsEntity,
 } from '../checklists/checklistsSlice';
 import { labelsEntity } from '../labels/labelsSlice';
-import { cardLabelsEntity } from '../cardLabels/cardLabelsSlice';
+import {
+	cardLabelsCreate,
+	cardLabelsDelete,
+	cardLabelsEntity,
+} from '../cardLabels/cardLabelsSlice';
 
 // Interfaces
 import {
@@ -56,6 +60,7 @@ const cardsSlice = createSlice({
 			.addCase(cardsCreate.fulfilled, (state, action: PayloadAction<any>) => {
 				cardsAdapter.addOne(state, {
 					...action.payload,
+					cardLabels: [],
 					labels: [],
 					checklists: [],
 					comments: [],
@@ -102,6 +107,38 @@ const cardsSlice = createSlice({
 						(comment: number) => comment === id
 					);
 					state.entities[cardId].comments.splice(index, 1);
+				}
+			)
+			.addCase(
+				cardLabelsCreate.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					const { id, labelId, cardId } = action.payload;
+					// update cardLabels
+					state.entities[cardId].cardLabels
+						? state.entities[cardId].cardLabels.push(id)
+						: (state.entities[cardId].cardLabels = [id]);
+					// update labels
+					state.entities[cardId].labels.push(labelId);
+				}
+			)
+			.addCase(
+				cardLabelsDelete.fulfilled,
+				(state, action: PayloadAction<any>) => {
+					const { id, labelId, cardId } = action.payload;
+					// Can't always keep card labels in state.
+					// So need to check it first.
+					if (state.entities[cardId].cardLabels) {
+						// remove cardLabel item
+						const cardLabelIndex = state.entities[cardId].cardLabels.findIndex(
+							(cardLabelId: number) => cardLabelId === id
+						);
+						state.entities[cardId].cardLabels.splice(cardLabelIndex, 1);
+					}
+					// remove label item
+					const labelIndex = state.entities[cardId].labels.findIndex(
+						(item: number) => item === labelId
+					);
+					state.entities[cardId].labels.splice(labelIndex, 1);
 				}
 			)
 			.addCase(

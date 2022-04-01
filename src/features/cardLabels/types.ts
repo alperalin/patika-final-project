@@ -7,4 +7,19 @@ interface CardLabelInterface {
 	updatedAt: string;
 }
 
-export type { CardLabelInterface };
+interface CardLabelCreateInterface {
+	cardId: CardLabelInterface['cardId'];
+	labelId: CardLabelInterface['labelId'];
+}
+
+interface CardLabelDeleteInterface {
+	id: CardLabelInterface['id'];
+	cardId: CardLabelInterface['cardId'];
+	labelId: CardLabelInterface['labelId'];
+}
+
+export type {
+	CardLabelInterface,
+	CardLabelCreateInterface,
+	CardLabelDeleteInterface,
+};

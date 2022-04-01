@@ -6,6 +6,7 @@ import {
 	cardsUpdate,
 	selectCardsById,
 } from '../../features/cards/cardsSlice';
+import { selectCardLabelsByCardId } from '../../features/cardLabels/cardLabelsSlice';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 
 // Component
@@ -32,6 +33,10 @@ import AccessTimeSharpIcon from '@mui/icons-material/AccessTimeSharp';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import CommentSharpIcon from '@mui/icons-material/CommentSharp';
 import DeleteOutlineSharpIcon from '@mui/icons-material/DeleteOutlineSharp';
+import {
+	cardLabelsCreate,
+	cardLabelsDelete,
+} from '../../features/cardLabels/cardLabelsSlice';
 
 // Interface
 interface PropsInterface {
@@ -128,6 +133,9 @@ function CardItem({ listTitle, cardId, index }: PropsInterface) {
 		checklists,
 		labels,
 	} = useAppSelector((state) => selectCardsById(state, cardId));
+	const cardLabels = useAppSelector((state) =>
+		selectCardLabelsByCardId(state, cardId)
+	);
 	const dispatch = useAppDispatch();
 
 	// States
@@ -165,6 +173,21 @@ function CardItem({ listTitle, cardId, index }: PropsInterface) {
 			);
 			setOpen(false);
 			return;
+		}
+
+		// labels added
+		// dispatch card label
+		if (newLabels.length > 0 && newLabels.length !== labels.length) {
+			newLabels.forEach((label) => {
+				dispatch(cardLabelsCreate({ labelId: label, cardId }));
+			});
+		} else if (cardLabels?.length && newLabels.length !== labels.length) {
+			labels.forEach((label: number) => {
+				const cardLabel = cardLabels.find((item) => item.labelId === label);
+				dispatch(
+					cardLabelsDelete({ id: cardLabel.id, cardId, labelId: label })
+				);
+			});
 		}
 
 		// if no due date

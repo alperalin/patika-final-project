@@ -40,9 +40,8 @@ Patika bitirme projesi kanban app.
 ## Calismayan Özellikler
 
 - Listenin sırasını değiştirme
-- Carda label ekleme, carddan label çıkarma.
+- Carda label stabil calismiyor.
 - Due Date bos girilemiyor.
-- VerifyToken calismiyor. API dogru olmasina ragmen sunucu 500 hatası donuyor.
 - Liste ve kart sırası karisik gelebiliyor.
 - Kullanici kendisi ile paylasilmis board'da diger uyeleri goremiyor. Sunucu kaynakli bir problem. Board -> Get List istegi dogru veriyi donmuyor.
 
