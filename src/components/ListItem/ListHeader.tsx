@@ -146,7 +146,14 @@ function ListHeader({ dnd, title, listId, boardId }: propsInterface) {
 						open={open}
 						onClose={handleMenuClose}
 					>
-						<MenuItem onClick={changeFormVisibility}>Edit</MenuItem>
+						<MenuItem
+							onClick={() => {
+								changeFormVisibility();
+								setAnchorEl(null);
+							}}
+						>
+							Edit
+						</MenuItem>
 						<MenuItem onClick={handleListDelete}>Delete</MenuItem>
 					</Menu>
 				</Grid>
