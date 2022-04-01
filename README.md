@@ -6,10 +6,14 @@ Patika bitirme projesi kanban app.
 
 - TypeScript (olabildigince :)
 - Create react app
-- Redux
+- Redux Toolkit
+- Redux Thunk
+- Normalizr
 - React Router
 - MUI Library
+- Date Fns
 - React Beautiful DnD
+- Axios
 
 ## Calisan özellikler
 
