@@ -107,7 +107,6 @@ function ListHeader({ dnd, title, listId, boardId }: propsInterface) {
 									label="List name"
 									value={listName}
 									onChange={handleInputChange}
-									onBlur={handleListNameChange}
 									endAdornment={
 										<InputAdornment position="end">
 											<IconButton
@@ -126,7 +125,7 @@ function ListHeader({ dnd, title, listId, boardId }: propsInterface) {
 						<Typography
 							component="h2"
 							fontSize="1.25rem"
-							onClick={changeFormVisibility}
+							onDoubleClick={changeFormVisibility}
 						>
 							{title}
 						</Typography>
@@ -147,6 +146,7 @@ function ListHeader({ dnd, title, listId, boardId }: propsInterface) {
 						open={open}
 						onClose={handleMenuClose}
 					>
+						<MenuItem onClick={changeFormVisibility}>Edit</MenuItem>
 						<MenuItem onClick={handleListDelete}>Delete</MenuItem>
 					</Menu>
 				</Grid>
