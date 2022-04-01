@@ -39,10 +39,9 @@ Patika bitirme projesi kanban app.
 
 ## Calismayan Özellikler
 
-- Listenin sırasını değiştirme
+- Liste ve kart sırası karisik gelebiliyor. Dnd stabil calismiyor.
 - Carda label stabil calismiyor.
 - Due Date bos girilemiyor.
-- Liste ve kart sırası karisik gelebiliyor.
 - Kullanici kendisi ile paylasilmis board'da diger uyeleri goremiyor. Sunucu kaynakli bir problem. Board -> Get List istegi dogru veriyi donmuyor.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.

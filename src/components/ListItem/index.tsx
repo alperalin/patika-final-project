@@ -41,34 +41,47 @@ function ListItem({ listId, index }: ListItemInterface) {
 	);
 	// Element
 	return (
-		<Box sx={listStyles}>
-			<ListHeader title={title} listId={listId} boardId={boardId} />
-			<Droppable droppableId={listId.toString()} type="card">
-				{(provided) => (
-					<Box
-						ref={provided.innerRef}
-						{...provided.droppableProps}
-						sx={listMainStyles}
-					>
-						{cards?.length > 0 &&
-							cards.map((cardId: number, index: number) => (
-								<CardItem
-									key={cardId}
-									listTitle={title}
-									cardId={cardId}
-									index={index}
-								/>
-							))}
-						{provided.placeholder}
-					</Box>
-				)}
-			</Droppable>
-			<ListFooter
-				type="card"
-				parentId={listId}
-				order={cards?.length > 0 ? cards.length : 0}
-			/>
-		</Box>
+		<Draggable draggableId={`list-${listId}`} index={index}>
+			{(provided) => (
+				<Box
+					{...provided.draggableProps}
+					ref={provided.innerRef}
+					sx={listStyles}
+				>
+					<ListHeader
+						dnd={provided.dragHandleProps}
+						title={title}
+						listId={listId}
+						boardId={boardId}
+					/>
+					<Droppable droppableId={listId.toString()} type="card">
+						{(provided) => (
+							<Box
+								ref={provided.innerRef}
+								{...provided.droppableProps}
+								sx={listMainStyles}
+							>
+								{cards?.length > 0 &&
+									cards.map((cardId: number, index: number) => (
+										<CardItem
+											key={cardId}
+											listTitle={title}
+											cardId={cardId}
+											index={index}
+										/>
+									))}
+								{provided.placeholder}
+							</Box>
+						)}
+					</Droppable>
+					<ListFooter
+						type="card"
+						parentId={listId}
+						order={cards?.length > 0 ? cards.length : 0}
+					/>
+				</Box>
+			)}
+		</Draggable>
 	);
 }
 

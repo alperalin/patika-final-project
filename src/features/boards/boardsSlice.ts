@@ -44,9 +44,35 @@ const boardsSlice = createSlice({
 		error: null,
 	}),
 	reducers: {
-		clearStatus: (state) => {
+		boardClearStatus: (state) => {
 			state.status = 'idle';
 			state.error = null;
+		},
+		boardsChangeListOrder: (state, action: PayloadAction<any>) => {
+			// Set status to pending
+			state.status = 'pending';
+
+			// Get payload
+			const { destination, source, draggableId, boardId } = action.payload;
+
+			// Get list id from draggable id
+			const draggableListId = draggableId.match(/\d+/);
+
+			// Create a new array from state lists
+			const newBoardLists = [...state.entities[boardId].lists];
+
+			// Change list positions
+			newBoardLists.splice(source.index, 1);
+			newBoardLists.splice(destination.index, 0, Number(draggableListId[0]));
+
+			// Update start list with new order
+			boardsAdapter.updateOne(state, {
+				id: Number(boardId),
+				changes: { lists: [...newBoardLists] },
+			});
+
+			// set status to succeeded
+			state.status = 'succeeded';
 		},
 	},
 	extraReducers(builder) {
@@ -172,7 +198,7 @@ const boardsFetchAll = createAsyncThunk('boards/FETCH_ALL', async () => {
 });
 
 // Export Actions
-const { clearStatus } = boardsSlice.actions;
+const { boardClearStatus, boardsChangeListOrder } = boardsSlice.actions;
 
 // Exports
 export {
@@ -181,7 +207,8 @@ export {
 	boardsDelete,
 	boardsFetchById,
 	boardsFetchAll,
-	clearStatus,
+	boardClearStatus,
+	boardsChangeListOrder,
 };
 
 // Export selector
