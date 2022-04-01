@@ -36,6 +36,11 @@ const boardsMemberSlice = createSlice({
 			state.status = 'idle';
 			state.error = null;
 		},
+		boardsMemberResetState: (state) => {
+			state.status = 'idle';
+			state.error = null;
+			boardsMemberAdapter.removeAll(state);
+		},
 	},
 	extraReducers(builder) {
 		builder
@@ -110,7 +115,7 @@ const boardsMemberFetchAll = createAsyncThunk(
 );
 
 // Export Actions
-const { clearStatus } = boardsMemberSlice.actions;
+const { clearStatus, boardsMemberResetState } = boardsMemberSlice.actions;
 
 // Exports
 export {
@@ -119,6 +124,7 @@ export {
 	boardsMemberDelete,
 	boardsMemberFetchAll,
 	clearStatus,
+	boardsMemberResetState,
 };
 
 // Export selector

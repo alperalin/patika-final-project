@@ -54,7 +54,11 @@ const cardsAdapter = createEntityAdapter<any>();
 const cardsSlice = createSlice({
 	name: 'cards',
 	initialState: cardsAdapter.getInitialState(),
-	reducers: {},
+	reducers: {
+		cardsResetState: (state) => {
+			cardsAdapter.removeAll(state);
+		},
+	},
 	extraReducers(builder) {
 		builder
 			.addCase(cardsCreate.fulfilled, (state, action: PayloadAction<any>) => {
@@ -193,10 +197,10 @@ const cardsDelete = createAsyncThunk(
 );
 
 // Export Actions
-// const {} = cardsSlice.actions;
+const { cardsResetState } = cardsSlice.actions;
 
 // Exports
-export { cardsEntity, cardsCreate, cardsUpdate, cardsDelete };
+export { cardsEntity, cardsCreate, cardsUpdate, cardsDelete, cardsResetState };
 
 // Export selector
 export const cardsSelector = (state: RootState) => state.cards;

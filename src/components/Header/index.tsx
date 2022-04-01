@@ -4,6 +4,12 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import useCookie from '../../hooks/useCookie';
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 import { clearUser } from '../../features/user/userSlice';
+import { boardResetState } from '../../features/boards/boardsSlice';
+import { usersResetState } from '../../features/users/usersSlice';
+import { listResetState } from '../../features/lists/listsSlice';
+import { cardsResetState } from '../../features/cards/cardsSlice';
+import { labelsResetState } from '../../features/labels/labelsSlice';
+import { boardsMemberResetState } from '../../features/boardsMember/boardsMemberSlice';
 
 // Components
 import Members from '../Members';
@@ -120,6 +126,12 @@ function Header({
 	// Handle Logout
 	function handleLogout(): void {
 		dispatch(clearUser());
+		dispatch(usersResetState());
+		dispatch(boardResetState());
+		dispatch(listResetState());
+		dispatch(cardsResetState());
+		dispatch(labelsResetState());
+		dispatch(boardsMemberResetState());
 		deleteCookie();
 		navigate('/');
 	}

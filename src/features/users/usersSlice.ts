@@ -31,6 +31,11 @@ const usersSlice = createSlice({
 			state.status = 'idle';
 			state.error = null;
 		},
+		usersResetState: (state) => {
+			state.status = 'idle';
+			state.error = null;
+			usersAdapter.removeAll(state);
+		},
 	},
 	extraReducers(builder) {
 		builder
@@ -57,10 +62,10 @@ const usersFetchAll = createAsyncThunk('users/FETCH_ALL', async () => {
 });
 
 // Export Actions
-const { clearStatus } = usersSlice.actions;
+const { clearStatus, usersResetState } = usersSlice.actions;
 
 // Exports
-export { usersEntity, usersFetchAll, clearStatus };
+export { usersEntity, usersFetchAll, clearStatus, usersResetState };
 
 // Export selector
 export const usersSelector = (state: RootState) => state.users;

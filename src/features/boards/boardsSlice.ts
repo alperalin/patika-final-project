@@ -44,6 +44,11 @@ const boardsSlice = createSlice({
 		error: null,
 	}),
 	reducers: {
+		boardResetState: (state) => {
+			state.status = 'idle';
+			state.error = null;
+			boardsAdapter.removeAll(state);
+		},
 		boardClearStatus: (state) => {
 			state.status = 'idle';
 			state.error = null;
@@ -198,7 +203,8 @@ const boardsFetchAll = createAsyncThunk('boards/FETCH_ALL', async () => {
 });
 
 // Export Actions
-const { boardClearStatus, boardsChangeListOrder } = boardsSlice.actions;
+const { boardClearStatus, boardResetState, boardsChangeListOrder } =
+	boardsSlice.actions;
 
 // Exports
 export {
@@ -208,6 +214,7 @@ export {
 	boardsFetchById,
 	boardsFetchAll,
 	boardClearStatus,
+	boardResetState,
 	boardsChangeListOrder,
 };
 

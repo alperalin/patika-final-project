@@ -46,6 +46,11 @@ const listsSlice = createSlice({
 			state.status = 'idle';
 			state.error = null;
 		},
+		listResetState: (state) => {
+			state.status = 'idle';
+			state.error = null;
+			listsAdapter.removeAll(state);
+		},
 		listChangeCardOrder: (state, action: PayloadAction<any>) => {
 			// Set status to pending
 			state.status = 'pending';
@@ -181,7 +186,8 @@ const listsDelete = createAsyncThunk(
 );
 
 // Export Actions
-const { listClearStatus, listChangeCardOrder } = listsSlice.actions;
+const { listClearStatus, listChangeCardOrder, listResetState } =
+	listsSlice.actions;
 
 // Exports
 export {
@@ -191,6 +197,7 @@ export {
 	listsDelete,
 	listClearStatus,
 	listChangeCardOrder,
+	listResetState,
 };
 
 // Export selector

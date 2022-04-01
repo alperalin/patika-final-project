@@ -39,6 +39,11 @@ const labelsSlice = createSlice({
 			state.status = 'idle';
 			state.error = null;
 		},
+		labelsResetState: (state) => {
+			state.status = 'idle';
+			state.error = null;
+			labelsAdapter.removeAll(state);
+		},
 	},
 	extraReducers(builder) {
 		builder
@@ -68,10 +73,10 @@ const labelsFetchAll = createAsyncThunk('labels/FETCH_ALL', async () => {
 });
 
 // Export Actions
-const { clearStatus } = labelsSlice.actions;
+const { clearStatus, labelsResetState } = labelsSlice.actions;
 
 // Exports
-export { labelsEntity, labelsFetchAll, clearStatus };
+export { labelsEntity, labelsFetchAll, clearStatus, labelsResetState };
 
 // Export selector
 export const labelsSelector = (state: RootState) => state.labels;
