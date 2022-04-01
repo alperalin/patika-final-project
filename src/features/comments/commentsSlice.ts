@@ -31,12 +31,7 @@ const commentsAdapter = createEntityAdapter<any>();
 const commentsSlice = createSlice({
 	name: 'comments',
 	initialState: commentsAdapter.getInitialState(),
-	reducers: {
-		// clearStatus: (state) => {
-		// 	state.apiStatus = 'idle';
-		// 	return state;
-		// },
-	},
+	reducers: {},
 	extraReducers(builder) {
 		builder
 			.addCase(
@@ -87,7 +82,7 @@ const commentsDelete = createAsyncThunk(
 );
 
 // Export Actions
-// const { clearStatus } = commentsSlice.actions;
+// const {} = commentsSlice.actions;
 
 // Exports
 export { commentsEntity, commentsCreate, commentsDelete };

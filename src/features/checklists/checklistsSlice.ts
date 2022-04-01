@@ -38,12 +38,7 @@ const checklistsAdapter = createEntityAdapter<any>();
 const checklistsSlice = createSlice({
 	name: 'checklists',
 	initialState: checklistsAdapter.getInitialState(),
-	reducers: {
-		// clearStatus: (state) => {
-		// 	state.apiStatus = 'idle';
-		// 	return state;
-		// },
-	},
+	reducers: {},
 	extraReducers(builder) {
 		builder
 			.addCase(
@@ -115,7 +110,7 @@ const checklistsDelete = createAsyncThunk(
 );
 
 // Export Actions
-// const { clearStatus } = checklistsSlice.actions;
+// const {} = checklistsSlice.actions;
 
 // Exports
 export { checklistsEntity, checklistsCreate, checklistsDelete };

@@ -46,6 +46,7 @@ ReactDOM.render(
 								</Auth>
 							}
 						></Route>
+						<Route path="*" element={<p>404! Nothing Found!</p>} />
 					</Route>
 				</Routes>
 			</Router>

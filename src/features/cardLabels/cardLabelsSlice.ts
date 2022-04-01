@@ -12,17 +12,7 @@ import { schema } from 'normalizr';
 import { boardsFetchById } from '../boards/boardsSlice';
 
 // Interfaces
-import {
-	BoardInterface,
-	BoardUpdateInterface,
-	BoardReduxInterface,
-} from './types';
-
-// const initialState: BoardReduxInterface = {
-// 	data: [],
-// 	apiStatus: 'idle',
-// 	apiMessage: null,
-// };
+import { CardLabelInterface } from './types';
 
 // Entity
 const cardLabelsEntity = new schema.Entity('cardLabels');
@@ -34,12 +24,7 @@ const cardLabelsAdapter = createEntityAdapter<any>();
 const cardLabelsSlice = createSlice({
 	name: 'cardLabels',
 	initialState: cardLabelsAdapter.getInitialState(),
-	reducers: {
-		// clearStatus: (state) => {
-		// 	state.apiStatus = 'idle';
-		// 	return state;
-		// },
-	},
+	reducers: {},
 	extraReducers(builder) {
 		builder.addCase(
 			boardsFetchById.fulfilled,
@@ -53,7 +38,7 @@ const cardLabelsSlice = createSlice({
 });
 
 // Export Actions
-// const { clearStatus } = boardsSlice.actions;
+// const {} = boardsSlice.actions;
 
 // Exports
 export { cardLabelsEntity };

@@ -68,6 +68,7 @@ function App() {
 		dispatch(boardsFetchById({ id: Number(boardId) }));
 		dispatch(boardsMemberFetchAll({ boardId: Number(boardId) }));
 		dispatch(labelsFetchAll());
+		// eslint-disable-next-line
 	}, []);
 
 	// Dispatch card order changes to api after redux changed
@@ -108,6 +109,7 @@ function App() {
 
 			dispatch(listClearStatus());
 		}
+		// eslint-disable-next-line
 	}, [listUpdateStatus]);
 
 	// Handle Board Title Save

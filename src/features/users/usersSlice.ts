@@ -17,12 +17,6 @@ import { UsersInterface } from './types';
 // entity
 const usersEntity = new schema.Entity('users');
 
-// const initialState: BoardReduxInterface = {
-// 	data: [],
-// 	apiStatus: 'idle',
-// 	apiMessage: null,
-// };
-
 const usersAdapter = createEntityAdapter<any>();
 
 // Redux Slice for Users

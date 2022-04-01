@@ -1,28 +1,10 @@
-import { ListInterface } from '../lists/types';
-import { UsersInterface } from '../users/types';
-
 // Interfaces
-interface BoardInterface {
+interface CardLabelInterface {
 	id: number;
-	title: string;
-	ownerId: number;
-	owner: UsersInterface;
-	members: UsersInterface[];
-	lists: ListInterface[];
+	cardId: number;
+	labelId: number;
 	createdAt: string;
 	updatedAt: string;
 }
 
-interface BoardReduxInterface {
-	data: BoardInterface[];
-	apiStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
-	apiMessage: string | null;
-}
-
-interface BoardUpdateInterface {
-	id: Pick<BoardInterface, 'id'>;
-	title: Pick<BoardInterface, 'title'>;
-	members?: Pick<BoardInterface, 'members'>;
-}
-
-export type { BoardInterface, BoardUpdateInterface, BoardReduxInterface };
+export type { CardLabelInterface };

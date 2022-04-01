@@ -27,7 +27,6 @@ import {
 } from './types';
 
 // Entities
-// const membersEntity = new schema.Entity('members');
 const boardsEntity = new schema.Entity('boards', {
 	lists: [listsEntity],
 	cards: [listsEntity],
